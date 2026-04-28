@@ -2,9 +2,6 @@
   "name": "artifact-os",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "node": "20.x"
-  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,26 +9,26 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@hello-pangea/dnd": "^16.6.0",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.49.4",
-    "framer-motion": "^12.38.0",
-    "lucide-react": "^1.11.0",
-    "next": "^9.3.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "framer-motion": "^11.11.11",
+    "next": "14.2.23",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "@hello-pangea/dnd": "^16.6.0",
     "react-hot-toast": "^2.4.1",
+    "lucide-react": "^0.474.0",
     "slugify": "^1.6.6"
   },
   "devDependencies": {
     "@types/node": "^20.17.30",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.5",
-    "autoprefixer": "^10.4.21",
     "eslint": "^8.57.1",
-    "eslint-config-next": "^16.2.4",
+    "eslint-config-next": "14.2.23",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "autoprefixer": "^10.4.21"
   }
 }
