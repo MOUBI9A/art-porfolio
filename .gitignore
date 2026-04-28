@@ -22,6 +22,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# SSH Keys
+id_ed25519*
+id_ed25519*.pub
+
 # local env files
 .env*.local
 

@@ -1,9 +1,22 @@
 // ─── Database Types ──────────────────────────────────────────────────────────
 
 export type VideoType = 'google_drive' | 'youtube' | 'vimeo' | 'unknown';
+export type Niche = 'filmmaker' | 'programmer' | 'photographer' | 'sound_editor' | 'musician';
+export type AppRole = 'user' | 'super_admin';
+
+export interface Profile {
+  id: string;
+  username: string;
+  full_name: string | null;
+  avatar_url: string | null;
+  niche: Niche;
+  role: AppRole;
+  created_at: string;
+}
 
 export interface Project {
   id: string;
+  user_id: string;
   title: string;
   slug: string;
   description: string | null;
@@ -17,6 +30,7 @@ export interface Project {
 
 export interface Settings {
   id: string;
+  user_id: string;
   name: string | null;
   bio: string | null;
   email: string | null;
@@ -29,10 +43,13 @@ export interface Settings {
   bg_color: string | null;
   font_family: string | null;
   grain_opacity: number | null;
+  template_id: string | null;
+  custom_domain: string | null;
 }
 
 export interface Experience {
   id: string;
+  user_id: string;
   company: string;
   role: string;
   description: string | null;
