@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Settings, Experience } from '@/lib/types';
+import Image from 'next/image';
 
 interface Props {
   settings: Settings | null;
@@ -83,10 +84,11 @@ export default function AboutSection({ settings, experience = [] }: Props) {
               >
                 {/* Decorative pattern or Profile Image */}
                 {settings?.profile_url ? (
-                  <img 
+                  <Image 
                     src={settings.profile_url} 
                     alt={name}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                 ) : (
                   <>

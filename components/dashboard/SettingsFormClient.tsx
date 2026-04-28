@@ -19,6 +19,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Settings, Profile, Niche } from '@/lib/types';
 import { processVideoUrl } from '@/lib/video';
 import toast from 'react-hot-toast';
+import Image from 'next/image';
 
 interface Props {
   settings: Settings | null;
@@ -170,7 +171,7 @@ export default function SettingsFormClient({ settings, profile }: Props) {
                 
                 <div className="relative w-full h-full rounded-2xl overflow-hidden bg-white/5 border border-white/10 group-hover:border-gold-500/50 transition-colors">
                   {formData.profile_url ? (
-                    <img src={formData.profile_url} alt="Profile" className="w-full h-full object-cover" />
+                    <Image src={formData.profile_url} alt="Profile" fill className="object-cover" />
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full text-white/20">
                       <User size={40} strokeWidth={1} />

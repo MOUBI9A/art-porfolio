@@ -5,6 +5,7 @@ import { Profile, Settings, Project, Experience } from '@/lib/types';
 import OSWindow from './OSWindow';
 import DesktopIcon from './DesktopIcon';
 import OSTaskbar from './OSTaskbar';
+import Image from 'next/image';
 
 interface OSDesktopProps {
   profile: Profile;
@@ -121,7 +122,12 @@ const OSDesktop: React.FC<OSDesktopProps> = ({ profile, settings, projects, expe
                  <div key={project.id} className="group cursor-pointer">
                     <div className="aspect-video bg-white/5 rounded-lg border border-white/10 overflow-hidden mb-2 relative">
                       {project.thumbnail_url && (
-                        <img src={project.thumbnail_url} alt={project.title} className="object-cover w-full h-full opacity-60 group-hover:opacity-100 transition-opacity" />
+                        <Image 
+                          src={project.thumbnail_url} 
+                          alt={project.title} 
+                          fill 
+                          className="object-cover opacity-60 group-hover:opacity-100 transition-opacity" 
+                        />
                       )}
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
                         <span className="text-xs font-bold tracking-widest px-3 py-1 bg-white text-black rounded-full">OPEN</span>
