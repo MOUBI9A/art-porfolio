@@ -13,7 +13,10 @@ interface OSDesktopProps {
   experience: Experience[];
 }
 
+import { NicheThemes } from './themes';
+
 const OSDesktop: React.FC<OSDesktopProps> = ({ profile, settings, projects, experience }) => {
+  const theme = NicheThemes[profile.niche as keyof typeof NicheThemes] || NicheThemes.filmmaker;
   const [openWindows, setOpenWindows] = useState<string[]>(['about']);
   const [focusedWindow, setFocusedWindow] = useState<string>('about');
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -33,44 +36,46 @@ const OSDesktop: React.FC<OSDesktopProps> = ({ profile, settings, projects, expe
   };
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-black text-white font-sans selection:bg-white/20">
+    <div className={`relative h-screen w-full overflow-hidden ${theme.isLight ? 'bg-white text-black' : 'bg-black text-white'} ${theme.font} selection:bg-white/20`}>
       {/* Dynamic Background */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-black to-purple-900/20" />
+        <div className={`absolute inset-0 bg-gradient-to-br ${theme.bgGradient}`} />
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-50 contrast-150" />
-        {/* Pulsing Glow */}
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-500/10 blur-[120px] rounded-full animate-pulse" />
       </div>
 
       {/* Desktop Icons Grid */}
       <div className="relative z-10 p-10 grid grid-cols-1 gap-8 w-fit h-fit max-h-[80vh]">
         <DesktopIcon 
           id="projects" 
-          label="Projects.exe" 
-          icon="📁" 
+          label={theme.labels.projects} 
+          icon={theme.icons.projects} 
           onClick={() => toggleWindow('projects')} 
           isActive={openWindows.includes('projects')}
+          isLight={theme.isLight}
         />
         <DesktopIcon 
           id="about" 
-          label="Bio.txt" 
-          icon="📄" 
+          label={theme.labels.about} 
+          icon={theme.icons.about} 
           onClick={() => toggleWindow('about')} 
           isActive={openWindows.includes('about')}
+          isLight={theme.isLight}
         />
         <DesktopIcon 
           id="ai" 
           label="Resident_AI" 
-          icon="🤖" 
+          icon={theme.icons.ai} 
           onClick={() => toggleWindow('ai')} 
           isActive={openWindows.includes('ai')}
+          isLight={theme.isLight}
         />
         <DesktopIcon 
           id="contact" 
           label="Connect.link" 
-          icon="🔗" 
+          icon={theme.icons.contact} 
           onClick={() => toggleWindow('contact')} 
           isActive={openWindows.includes('contact')}
+          isLight={theme.isLight}
         />
       </div>
 
@@ -79,21 +84,22 @@ const OSDesktop: React.FC<OSDesktopProps> = ({ profile, settings, projects, expe
         {openWindows.includes('about') && (
           <OSWindow 
             id="about" 
-            title="Bio.txt — Notepad" 
+            title={`${theme.labels.about} — Notepad`}
             onClose={() => toggleWindow('about')}
             onFocus={() => setFocusedWindow('about')}
             isFocused={focusedWindow === 'about'}
+            isLight={theme.isLight}
           >
-            <div className="p-8 font-mono text-sm leading-relaxed max-w-2xl">
-               <h1 className="text-2xl font-bold mb-4 border-b border-white/10 pb-4">{profile.full_name}</h1>
-               <p className="text-blue-400 mb-6">// {profile.niche.toUpperCase()} ENTRY</p>
-               <p className="mb-4">{settings?.bio || 'System identity loading...'}</p>
-               <div className="mt-8 pt-8 border-t border-white/10">
-                 <h2 className="text-lg font-bold mb-4">Experience Log:</h2>
+            <div className={`p-8 ${theme.font} text-sm leading-relaxed max-w-2xl`}>
+               <h1 className="text-2xl font-bold mb-4 border-b border-black/10 dark:border-white/10 pb-4">{profile.full_name}</h1>
+               <p className={`${theme.isLight ? 'text-blue-600' : 'text-blue-400'} mb-6 uppercase`}>// {profile.niche} Entry</p>
+               <p className="mb-4 whitespace-pre-wrap">{settings?.bio || 'System identity loading...'}</p>
+               <div className={`mt-8 pt-8 border-t ${theme.isLight ? 'border-black/10' : 'border-white/10'}`}>
+                 <h2 className="text-lg font-bold mb-4">Chronology:</h2>
                  {experience.map(exp => (
                    <div key={exp.id} className="mb-4">
-                     <p className="text-gray-400">[{exp.start_date} - {exp.end_date || 'PRESENT'}]</p>
-                     <p className="font-bold text-white">{exp.role} @ {exp.company}</p>
+                     <p className="opacity-60">[{exp.start_date} - {exp.end_date || 'PRESENT'}]</p>
+                     <p className="font-bold">{exp.role} @ {exp.company}</p>
                    </div>
                  ))}
                </div>
@@ -136,6 +142,7 @@ const OSDesktop: React.FC<OSDesktopProps> = ({ profile, settings, projects, expe
         openWindows={openWindows}
         focusedWindow={focusedWindow}
         onToggleWindow={toggleWindow}
+        isLight={theme.isLight}
       />
     </div>
   );

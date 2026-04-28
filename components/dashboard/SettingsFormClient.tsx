@@ -16,15 +16,16 @@ import {
   RotateCcw
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import { Settings } from '@/lib/types';
+import { Settings, Profile, Niche } from '@/lib/types';
 import { processVideoUrl } from '@/lib/video';
 import toast from 'react-hot-toast';
 
 interface Props {
   settings: Settings | null;
+  profile: Profile | null;
 }
 
-export default function SettingsFormClient({ settings }: Props) {
+export default function SettingsFormClient({ settings, profile }: Props) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -42,6 +43,8 @@ export default function SettingsFormClient({ settings }: Props) {
     bg_color: settings?.bg_color || '#0a0a0a',
     font_family: settings?.font_family || 'playfair',
     grain_opacity: settings?.grain_opacity || 0.05,
+    template_id: settings?.template_id || 'classic',
+    niche: profile?.niche || 'filmmaker' as Niche,
   });
 
   const [uploading, setUploading] = useState(false);
@@ -92,26 +95,21 @@ export default function SettingsFormClient({ settings }: Props) {
     setLoading(true);
 
     try {
-      let error;
+      const { niche, ...settingsData } = formData;
       
-      if (settings?.id) {
-        // Update existing row
-        const { error: err } = await supabase
-          .from('settings')
-          .update(formData)
-          .eq('id', settings.id);
-        error = err;
-      } else {
-        // Insert first row
-        const { error: err } = await supabase
-          .from('settings')
-          .insert(formData);
-        error = err;
-      }
+      const [settingsUpdate, profileUpdate] = await Promise.all([
+        settings?.id 
+          ? supabase.from('settings').update(settingsData).eq('id', settings.id)
+          : supabase.from('settings').insert(settingsData),
+        profile?.id
+          ? supabase.from('profiles').update({ niche }).eq('id', profile.id)
+          : Promise.resolve({ error: null })
+      ]);
 
-      if (error) throw error;
+      if (settingsUpdate.error) throw settingsUpdate.error;
+      if (profileUpdate.error) throw profileUpdate.error;
 
-      toast.success('Settings updated successfully');
+      toast.success('Artifact Identity updated');
       router.refresh();
     } catch (error: any) {
       toast.error(error.message || 'Error updating settings');
@@ -189,6 +187,43 @@ export default function SettingsFormClient({ settings }: Props) {
                 </div>
               </div>
               <p className="mt-6 text-[10px] text-white/20 uppercase tracking-[0.2em] font-medium">Profile Image</p>
+            </div>
+
+            {/* SaaS Niche & Template Selection */}
+            <div className="pt-6 border-t border-white/5 space-y-6">
+              <div>
+                <label className="block text-xs font-medium text-white/40 mb-3 uppercase tracking-wider text-blue-400">System Identity (Niche)</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {['filmmaker', 'programmer', 'photographer', 'sound_editor', 'musician'].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, niche: n as Niche }))}
+                      className={`px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest border transition-all ${
+                        formData.niche === n 
+                          ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' 
+                          : 'bg-white/5 border-white/10 text-white/40 hover:border-white/20'
+                      }`}
+                    >
+                      {n.replace('_', ' ')}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-white/40 mb-3 uppercase tracking-wider">OS Template Style</label>
+                <select 
+                  className="form-input"
+                  value={formData.template_id || 'classic'}
+                  onChange={(e) => setFormData(prev => ({ ...prev, template_id: e.target.value }))}
+                >
+                  <option value="classic">Cinematic OS (Classic)</option>
+                  <option value="terminal">Terminal OS (Hacker)</option>
+                  <option value="gallery">Gallery OS (Minimal)</option>
+                  <option value="studio">Studio OS (Vibrant)</option>
+                </select>
+              </div>
             </div>
 
             <div>

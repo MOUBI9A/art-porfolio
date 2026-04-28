@@ -6,15 +6,19 @@ export const metadata: Metadata = { title: 'Dashboard' };
 
 export default async function DashboardPage() {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return null;
 
   const [
     { count: projectCount },
     { data: recentProjectsData },
   ] = await Promise.all([
-    supabase.from('projects').select('*', { count: 'exact', head: true }),
+    supabase.from('projects').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
     supabase
       .from('projects')
       .select('id, title, thumbnail_url, created_at, role')
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .limit(4),
   ]);
@@ -22,7 +26,7 @@ export default async function DashboardPage() {
   const recentProjects = recentProjectsData as any[];
 
   const stats = [
-    { label: 'Total Projects', value: projectCount ?? 0, href: '/dashboard/projects' },
+    { label: 'My Projects', value: projectCount ?? 0, href: '/dashboard/projects' },
   ];
 
   return (

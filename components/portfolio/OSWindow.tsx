@@ -10,6 +10,7 @@ interface OSWindowProps {
   onClose: () => void;
   onFocus: () => void;
   isFocused: boolean;
+  isLight?: boolean;
   className?: string;
 }
 
@@ -19,6 +20,7 @@ const OSWindow: React.FC<OSWindowProps> = ({
   onClose, 
   onFocus, 
   isFocused,
+  isLight,
   className = "w-[600px] h-[400px]"
 }) => {
   return (
@@ -30,8 +32,8 @@ const OSWindow: React.FC<OSWindowProps> = ({
       onPointerDown={onFocus}
       className={`absolute top-20 left-1/3 pointer-events-auto flex flex-col rounded-xl border overflow-hidden backdrop-blur-xl shadow-2xl transition-all duration-300 ${
         isFocused 
-          ? 'border-white/30 bg-black/80 z-50 ring-1 ring-white/10' 
-          : 'border-white/10 bg-black/40 z-30 opacity-60'
+          ? (isLight ? 'border-black/30 bg-white/90 z-50 ring-1 ring-black/10' : 'border-white/30 bg-black/80 z-50 ring-1 ring-white/10')
+          : (isLight ? 'border-black/10 bg-white/40 z-30 opacity-60' : 'border-white/10 bg-black/40 z-30 opacity-60')
       } ${className}`}
     >
       {/* Title Bar */}
@@ -47,9 +49,9 @@ const OSWindow: React.FC<OSWindowProps> = ({
             e.stopPropagation();
             onClose();
           }}
-          className="hover:bg-red-500/80 w-6 h-6 flex items-center justify-center rounded-lg transition-colors group"
+          className={`hover:bg-red-500/80 w-6 h-6 flex items-center justify-center rounded-lg transition-colors group ${isLight ? 'bg-black/5' : 'bg-white/5'}`}
         >
-          <span className="text-xs group-hover:text-white text-gray-500">×</span>
+          <span className={`text-xs group-hover:text-white ${isLight ? 'text-black/50' : 'text-white/50'}`}>×</span>
         </button>
       </div>
 

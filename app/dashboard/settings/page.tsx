@@ -6,7 +6,12 @@ export const metadata: Metadata = { title: 'Settings | Dashboard' };
 
 export default async function SettingsPage() {
   const supabase = await createClient();
-  const { data: settings } = await supabase.from('settings').select('*').single();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  const [settingsRes, profileRes] = await Promise.all([
+    supabase.from('settings').select('*').single(),
+    supabase.from('profiles').select('*').eq('id', user?.id).single()
+  ]);
 
   return (
     <div className="p-8 max-w-3xl w-full">
@@ -24,11 +29,14 @@ export default async function SettingsPage() {
           Site Settings
         </h1>
         <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>
-          Edit your profile, bio, contact info, and hero content.
+          Edit your profile, bio, profession, and OS template.
         </p>
       </div>
 
-      <SettingsFormClient settings={settings ?? null} />
+      <SettingsFormClient 
+        settings={settingsRes.data ?? null} 
+        profile={profileRes.data ?? null}
+      />
     </div>
   );
 }
