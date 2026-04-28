@@ -5,22 +5,30 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
 import toast, { Toaster } from 'react-hot-toast';
-
 import Link from 'next/link';
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
   const supabase = createClient();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
 
-  async function handleLogin(e: React.FormEvent) {
+  async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signUp({ 
+      email, 
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        }
+      }
+    });
 
     if (error) {
       toast.error(error.message);
@@ -28,7 +36,7 @@ export default function LoginPage() {
       return;
     }
 
-    toast.success('System access granted.');
+    toast.success('Identity created. Welcome to ArtifactOS.');
     router.push('/dashboard');
     router.refresh();
   }
@@ -62,19 +70,33 @@ export default function LoginPage() {
           className="w-full max-w-md px-6"
         >
           <div className="text-center mb-10">
-            <p className="text-[10px] tracking-[0.4em] uppercase mb-3 text-red-500 font-bold">
-              ArtifactOS // Authenticate
+            <p className="text-[10px] tracking-[0.4em] uppercase mb-3 text-blue-400 font-bold">
+              ArtifactOS // Initialization
             </p>
             <h1 className="text-4xl font-bold text-white tracking-tighter">
-              Admin Access
+              Create Identity
             </h1>
             <p className="text-sm mt-2 text-gray-500">
-              Sign in to manage your creative legacy
+              Join the unified network of visionaries
             </p>
           </div>
 
           <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl">
-            <form onSubmit={handleLogin} className="flex flex-col gap-5">
+            <form onSubmit={handleSignup} className="flex flex-col gap-5">
+              <div>
+                <label className="block text-[10px] font-bold mb-2 text-gray-500 tracking-widest uppercase">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="e.g. John Doe"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-colors"
+                />
+              </div>
+
               <div>
                 <label className="block text-[10px] font-bold mb-2 text-gray-500 tracking-widest uppercase">
                   Email
@@ -85,7 +107,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-colors"
                 />
               </div>
 
@@ -99,7 +121,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-colors"
                 />
               </div>
 
@@ -108,15 +130,15 @@ export default function LoginPage() {
                 disabled={loading}
                 className="w-full py-4 rounded-xl text-xs font-bold mt-2 transition-all duration-300 bg-white text-black hover:bg-gray-200 disabled:opacity-50 tracking-widest uppercase"
               >
-                {loading ? 'Authenticating…' : 'Access System'}
+                {loading ? 'Initializing…' : 'Establish Artifact'}
               </button>
             </form>
 
             <div className="mt-8 pt-8 border-t border-white/5 text-center">
               <p className="text-[10px] text-gray-500 uppercase tracking-widest">
-                New to the platform? {' '}
-                <Link href="/auth/signup" className="text-white hover:underline underline-offset-4">
-                  Initialize Identity
+                Already have an identity? {' '}
+                <Link href="/auth/login" className="text-white hover:underline underline-offset-4">
+                  Log In
                 </Link>
               </p>
             </div>
