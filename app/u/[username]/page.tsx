@@ -56,6 +56,8 @@ async function getPortfolioData(username: string): Promise<{
   }
 }
 
+import OSDesktop from '@/components/portfolio/OSDesktop';
+
 export default async function UserPortfolioPage({ params }: { params: { username: string } }) {
   const { username } = params;
   const { profile, settings, projects, experience } = await getPortfolioData(username);
@@ -64,14 +66,12 @@ export default async function UserPortfolioPage({ params }: { params: { username
     notFound();
   }
 
-  // TODO: Render different components/themes based on profile.niche and settings.template_id
-  
   return (
-    <main>
-      <Hero settings={settings} />
-      <ProjectGrid projects={projects} />
-      <AboutSection settings={settings} experience={experience} />
-      <ContactSection settings={settings} />
-    </main>
+    <OSDesktop 
+      profile={profile} 
+      settings={settings} 
+      projects={projects} 
+      experience={experience} 
+    />
   );
 }
