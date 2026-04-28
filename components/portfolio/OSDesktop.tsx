@@ -92,7 +92,7 @@ const OSDesktop: React.FC<OSDesktopProps> = ({ profile, settings, projects, expe
           >
             <div className={`p-8 ${theme.font} text-sm leading-relaxed max-w-2xl`}>
                <h1 className="text-2xl font-bold mb-4 border-b border-black/10 dark:border-white/10 pb-4">{profile.full_name}</h1>
-               <p className={`${theme.isLight ? 'text-blue-600' : 'text-blue-400'} mb-6 uppercase`}>// {profile.niche} Entry</p>
+               <p className={`${theme.isLight ? 'text-blue-600' : 'text-blue-400'} mb-6 uppercase`}>{"//"} {profile.niche} Entry</p>
                <p className="mb-4 whitespace-pre-wrap">{settings?.bio || 'System identity loading...'}</p>
                <div className={`mt-8 pt-8 border-t ${theme.isLight ? 'border-black/10' : 'border-white/10'}`}>
                  <h2 className="text-lg font-bold mb-4">Chronology:</h2>
