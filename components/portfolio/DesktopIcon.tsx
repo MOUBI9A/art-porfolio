@@ -9,9 +9,10 @@ interface DesktopIconProps {
   icon: string;
   onClick: () => void;
   isActive: boolean;
+  isLight?: boolean;
 }
 
-const DesktopIcon: React.FC<DesktopIconProps> = ({ label, icon, onClick, isActive }) => {
+const DesktopIcon: React.FC<DesktopIconProps> = ({ label, icon, onClick, isActive, isLight = false }) => {
   return (
     <motion.button
       whileHover={{ scale: 1.05 }}
