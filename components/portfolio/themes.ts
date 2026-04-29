@@ -1,10 +1,28 @@
 'use client';
 
-export const NicheThemes = {
+export interface Theme {
+  bgGradient: string;
+  accent: string;
+  font: string;
+  isLight: boolean;
+  icons: {
+    projects: string;
+    about: string;
+    ai: string;
+    contact: string;
+  };
+  labels: {
+    projects: string;
+    about: string;
+  };
+}
+
+export const NicheThemes: Record<string, Theme> = {
   filmmaker: {
     bgGradient: "from-blue-900/20 via-black to-purple-900/20",
     accent: "blue",
     font: "font-sans",
+    isLight: false,
     icons: {
       projects: "🎬",
       about: "📄",
@@ -20,6 +38,7 @@ export const NicheThemes = {
     bgGradient: "from-green-900/20 via-black to-emerald-900/20",
     accent: "green",
     font: "font-mono",
+    isLight: false,
     icons: {
       projects: "⌨️",
       about: "terminal",
@@ -51,6 +70,7 @@ export const NicheThemes = {
     bgGradient: "from-fuchsia-900/20 via-black to-pink-900/20",
     accent: "pink",
     font: "font-sans",
+    isLight: false,
     icons: {
       projects: "🎹",
       about: "🔊",
