@@ -21,6 +21,7 @@ export const metadata: Metadata = {
 import CustomCursor from '@/components/public/CustomCursor';
 import ThemeProvider from '@/components/public/ThemeProvider';
 import { createClient } from '@/lib/supabase/server';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export default async function RootLayout({
   children,
@@ -49,6 +50,7 @@ export default async function RootLayout({
         <div className="noise-grain" />
         <CustomCursor />
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );
