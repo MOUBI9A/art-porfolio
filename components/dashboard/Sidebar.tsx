@@ -24,6 +24,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
   const router = useRouter();
   const supabase = createClient();
   const [username, setUsername] = useState<string | null>(null);
+  const [siteUrl, setSiteUrl] = useState<string>('');
 
   useEffect(() => {
     async function fetchProfile() {
@@ -34,7 +35,23 @@ export default function Sidebar({ userEmail }: SidebarProps) {
           .select('username')
           .eq('id', user.id)
           .single();
-        if (data) setUsername(data.username);
+        if (data) {
+          setUsername(data.username);
+          
+          // Construct Dynamic Pro URL
+          if (typeof window !== 'undefined') {
+            const hostname = window.location.hostname;
+            const protocol = window.location.protocol;
+            
+            // If on localhost or vercel preview, stay on subpath
+            if (hostname === 'localhost' || hostname.includes('vercel.app')) {
+              setSiteUrl(`/u/${data.username}`);
+            } else {
+              // Production: use subdomain
+              setSiteUrl(`${protocol}//${data.username}.${hostname}`);
+            }
+          }
+        }
       }
     }
     fetchProfile();
@@ -128,12 +145,17 @@ export default function Sidebar({ userEmail }: SidebarProps) {
         </div>
 
         <Link 
-          href={username ? `/u/${username}` : "/"} 
+          href={siteUrl || "/"} 
           target="_blank"
-          className="sidebar-link mb-1"
+          className="sidebar-link mb-1 group"
         >
-          <ExternalLink size={18} />
+          <ExternalLink size={18} className="group-hover:text-gold-500 transition-all duration-300" />
           <span>View Site</span>
+          {username && (
+            <span className="ml-auto text-[8px] opacity-0 group-hover:opacity-20 font-mono tracking-tighter uppercase transition-opacity">
+              {username}.artifact.os
+            </span>
+          )}
         </Link>
 
         <button 
