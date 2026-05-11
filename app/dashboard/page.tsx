@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import AnalyticsDashboard from '@/components/dashboard/AnalyticsDashboard';
+import OnboardingProgress from '@/components/dashboard/OnboardingProgress';
 
 export const metadata: Metadata = { title: 'Dashboard' };
 
@@ -15,6 +16,7 @@ export default async function DashboardPage() {
   const [
     { count: projectCount },
     { data: recentProjectsData },
+    { data: settings },
   ] = await Promise.all([
     supabase.from('projects').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
     supabase
@@ -23,12 +25,23 @@ export default async function DashboardPage() {
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .limit(4),
+    supabase.from('settings').select('*').eq('user_id', user.id).single(),
   ]);
 
   const recentProjects = recentProjectsData as any[];
 
+  // Onboarding checks
+  const checks = {
+    hasIdentity: !!(settings?.profile_url || settings?.bio),
+    hasArtifact: (projectCount ?? 0) > 0,
+    hasInterface: !!settings?.template_id,
+  };
+
   return (
-    <div className="p-8 max-w-5xl w-full">
+    <div className="p-8 max-w-5xl w-full mx-auto">
+      {/* Onboarding */}
+      <OnboardingProgress checks={checks} />
+
       {/* Header */}
       <div className="mb-10">
         <p

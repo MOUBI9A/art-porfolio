@@ -16,7 +16,13 @@ export default async function LandingNav() {
         </span>
       </Link>
       
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-6">
+        <Link 
+          href="/pricing" 
+          className="text-sm font-medium text-white/60 hover:text-white transition-colors hidden sm:block"
+        >
+          Pricing
+        </Link>
         {user ? (
           <Link 
             href="/dashboard" 

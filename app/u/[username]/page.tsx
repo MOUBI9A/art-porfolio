@@ -74,6 +74,7 @@ export async function generateMetadata({ params }: { params: Promise<{ username:
 
   const name = profile.full_name || profile.username;
   const description = settings?.bio || `Explore the professional portfolio of ${name}. Built with ArtifactOS.`;
+  const ogImage = `/api/og?username=${username}`;
 
   return {
     title: `${name} | ArtifactOS`,
@@ -82,13 +83,13 @@ export async function generateMetadata({ params }: { params: Promise<{ username:
       title: `${name} | ArtifactOS`,
       description: description,
       type: 'website',
-      images: profile.avatar_url ? [{ url: profile.avatar_url }] : [],
+      images: [{ url: ogImage }],
     },
     twitter: {
       card: 'summary_large_image',
       title: `${name} | ArtifactOS`,
       description: description,
-      images: profile.avatar_url ? [profile.avatar_url] : [],
+      images: [ogImage],
     },
   };
 }
