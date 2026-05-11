@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { 
@@ -22,6 +23,22 @@ export default function Sidebar({ userEmail }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
+  const [username, setUsername] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchProfile() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('id', user.id)
+          .single();
+        if (data) setUsername(data.username);
+      }
+    }
+    fetchProfile();
+  }, [supabase]);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -111,7 +128,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
         </div>
 
         <Link 
-          href="/" 
+          href={username ? `/u/${username}` : "/"} 
           target="_blank"
           className="sidebar-link mb-1"
         >
