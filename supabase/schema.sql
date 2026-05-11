@@ -180,3 +180,17 @@ CREATE TRIGGER on_collaborator_added
   AFTER INSERT ON public.project_collaborators
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_collaborator();
 
+-- ─── FUNCTIONS ───────────────────────────────────────────────────────────────
+
+-- RPC: Delete User Data (Danger Zone)
+CREATE OR REPLACE FUNCTION public.delete_user_data()
+RETURNS void AS $$
+BEGIN
+  -- We delete from public.profiles. 
+  -- Due to ON DELETE CASCADE on all referencing tables (settings, projects, etc.),
+  -- this will clean up all associated user data.
+  DELETE FROM public.profiles WHERE id = auth.uid();
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+
