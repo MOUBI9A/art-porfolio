@@ -3,27 +3,33 @@ import { updateSession } from '@/lib/supabase/middleware';
 
 export async function middleware(request: NextRequest) {
   const url = request.nextUrl;
-  const hostname = request.headers.get('host') || '';
+  const host = request.headers.get('host') || '';
 
-  // Define your main domain (production)
+  // 1. Skip system/internal paths immediately
+  if (
+    url.pathname.startsWith('/_next') || 
+    url.pathname.startsWith('/api') || 
+    url.pathname.startsWith('/u/') || 
+    url.pathname === '/favicon.ico'
+  ) {
+    return await updateSession(request);
+  }
+
+  // 2. Define main domain
   const mainDomain = process.env.NEXT_PUBLIC_MAIN_DOMAIN || 'artifact.os';
   
-  // Extract subdomain
-  const subdomain = hostname.split('.')[0];
+  // 3. Extract subdomain (e.g., username.artifact.os)
+  const subdomain = host.endsWith(`.${mainDomain}`) 
+    ? host.replace(`.${mainDomain}`, '') 
+    : null;
 
-  // If there is a subdomain and it's not 'www', not the main domain, and not a vercel preview
-  if (
-    subdomain && 
-    subdomain !== 'www' && 
-    !hostname.includes('localhost') &&
-    !hostname.includes(mainDomain) &&
-    !hostname.includes('vercel.app')
-  ) {
-    // Rewrite [username].domain.com to /u/[username]
+  // 4. If we have a valid user subdomain (not www), rewrite to /u/[username]
+  if (subdomain && subdomain !== 'www') {
     url.pathname = `/u/${subdomain}${url.pathname}`;
     return NextResponse.rewrite(url);
   }
 
+  // 5. Otherwise, proceed with session update (Dashboard protection etc)
   return await updateSession(request);
 }
 

@@ -145,7 +145,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
         </div>
 
         <Link 
-          href={siteUrl || "/"} 
+          href={username ? `/u/${username}` : "/"} 
           target="_blank"
           className="sidebar-link mb-1 group"
         >
