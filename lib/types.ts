@@ -25,6 +25,7 @@ export interface Project {
   video_type: VideoType | null;
   thumbnail_url: string | null;
   display_order: number;
+  is_published: boolean;
   created_at: string;
   project_collaborators?: ProjectCollaborator[];
 }
@@ -82,6 +83,7 @@ export type ProjectFormData = {
   video_url: string;
   thumbnail_url: string;
   display_order: number;
+  is_published: boolean;
 };
 
 export type SettingsFormData = {

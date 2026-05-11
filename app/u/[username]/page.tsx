@@ -34,6 +34,7 @@ async function getPortfolioData(username: string): Promise<{
         .from('projects')
         .select('*, project_collaborators(*, profile:profiles(*))')
         .eq('user_id', profile.id)
+        .eq('is_published', true)
         .order('display_order', { ascending: true })
         .order('created_at', { ascending: false }),
       supabase

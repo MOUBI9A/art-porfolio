@@ -12,7 +12,9 @@ import {
   ExternalLink,
   Search,
   Plus,
-  Film
+  Film,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Project } from '@/lib/types';
@@ -154,7 +156,19 @@ export default function ProjectsTableClient({ initialProjects }: Props) {
                             </div>
                             <div className="truncate">
                               <p className="font-medium text-white truncate">{project.title}</p>
-                              <p className="text-xs text-white/30 truncate">{project.slug}</p>
+                              <div className="flex items-center gap-2 mt-1">
+                                {project.is_published ? (
+                                  <span className="flex items-center gap-1 text-[9px] uppercase tracking-widest text-gold-500 font-bold bg-gold-500/10 px-1.5 py-0.5 rounded">
+                                    <Eye size={10} /> Published
+                                  </span>
+                                ) : (
+                                  <span className="flex items-center gap-1 text-[9px] uppercase tracking-widest text-white/30 font-bold bg-white/5 px-1.5 py-0.5 rounded">
+                                    <EyeOff size={10} /> Draft
+                                  </span>
+                                )}
+                                <span className="text-[10px] text-white/20">•</span>
+                                <p className="text-[10px] text-white/40 truncate">{project.slug}</p>
+                              </div>
                             </div>
                           </div>
 

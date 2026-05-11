@@ -9,7 +9,9 @@ import {
   Video, 
   Image as ImageIcon,
   Check,
-  Loader2
+  Loader2,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -40,6 +42,7 @@ export default function ProjectFormClient({ mode, project }: Props) {
     video_url: project?.video_url || '',
     thumbnail_url: project?.thumbnail_url || '',
     display_order: project?.display_order ?? 0,
+    is_published: project?.is_published ?? false,
   });
 
   const [videoPreview, setVideoPreview] = useState<{
@@ -159,6 +162,18 @@ export default function ProjectFormClient({ mode, project }: Props) {
         </Link>
 
         <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => setFormData(prev => ({ ...prev, is_published: !prev.is_published }))}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
+              formData.is_published 
+                ? 'border-gold-500/30 text-gold-500 bg-gold-500/5' 
+                : 'border-white/10 text-white/40 hover:bg-white/5'
+            }`}
+          >
+            {formData.is_published ? <Eye size={16} /> : <EyeOff size={16} />}
+            <span>{formData.is_published ? 'Published' : 'Draft Mode'}</span>
+          </button>
           {mode === 'edit' && (
             <button
               type="button"
