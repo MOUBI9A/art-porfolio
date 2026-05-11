@@ -26,6 +26,7 @@ export interface Project {
   thumbnail_url: string | null;
   display_order: number;
   created_at: string;
+  project_collaborators?: ProjectCollaborator[];
 }
 
 export interface Settings {
@@ -61,6 +62,16 @@ export interface Experience {
   created_at: string;
 }
 
+export interface ProjectCollaborator {
+  id: string;
+  project_id: string;
+  profile_id: string;
+  role_title: string;
+  created_at: string;
+  // Join property
+  profile?: Profile;
+}
+
 // ─── Form Types ───────────────────────────────────────────────────────────────
 
 export type ProjectFormData = {
@@ -92,10 +103,20 @@ export type SettingsFormData = {
 export type Database = {
   public: {
     Tables: {
+      profiles: {
+        Row: Profile;
+        Insert: Profile;
+        Update: Partial<Profile>;
+      };
       projects: {
         Row: Project;
         Insert: Omit<Project, 'id' | 'created_at'>;
         Update: Partial<Omit<Project, 'id' | 'created_at'>>;
+      };
+      project_collaborators: {
+        Row: ProjectCollaborator;
+        Insert: Omit<ProjectCollaborator, 'id' | 'created_at' | 'profile'>;
+        Update: Partial<Omit<ProjectCollaborator, 'id' | 'created_at' | 'profile'>>;
       };
       settings: {
         Row: Settings;

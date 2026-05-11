@@ -16,6 +16,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Project, VideoType } from '@/lib/types';
 import { generateSlug } from '@/lib/slug';
 import { processVideoUrl } from '@/lib/video';
+import CollaboratorManager from './CollaboratorManager';
 import toast from 'react-hot-toast';
 
 interface Props {
@@ -341,6 +342,10 @@ export default function ProjectFormClient({ mode, project }: Props) {
               </div>
             </div>
           </section>
+
+          {mode === 'edit' && project?.id && (
+            <CollaboratorManager projectId={project.id} />
+          )}
         </div>
       </div>
     </form>
