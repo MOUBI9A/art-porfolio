@@ -134,6 +134,23 @@ const OSDesktop: React.FC<OSDesktopProps> = ({ profile, settings, projects, expe
                       </div>
                     </div>
                     <p className="text-xs font-bold truncate text-center">{project.title}</p>
+                    {project.project_collaborators && project.project_collaborators.length > 0 && (
+                      <div className="flex justify-center -space-x-1 mt-1">
+                        {project.project_collaborators.map(collab => (
+                          <div 
+                            key={collab.id} 
+                            className="w-4 h-4 rounded-full border border-[#222] bg-white/20 flex items-center justify-center text-[7px] overflow-hidden relative z-10 hover:z-20 transition-transform hover:scale-125" 
+                            title={`${collab.profile?.full_name || collab.profile?.username} - ${collab.role_title}`}
+                          >
+                            {collab.profile?.avatar_url ? (
+                              <Image src={collab.profile.avatar_url} alt="avatar" fill className="object-cover" />
+                            ) : (
+                              <span>{(collab.profile?.full_name || collab.profile?.username || '?').charAt(0).toUpperCase()}</span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                  </div>
                ))}
             </div>
