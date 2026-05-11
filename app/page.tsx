@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { Settings, Project, Profile } from '@/lib/types';
 import LandingHero from '@/components/landing/LandingHero';
+import SaaSShowcase from '@/components/landing/SaaSShowcase';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -29,8 +30,10 @@ export default async function LandingPage() {
     <main className="bg-[#050505] min-h-screen text-white">
       <LandingHero />
       
+      <SaaSShowcase />
+      
       {/* Featured Section */}
-      <section id="featured" className="py-32 relative overflow-hidden">
+      <section id="featured" className="py-32 relative overflow-hidden bg-white/[0.02] border-y border-white/5">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gold-500/5 blur-[120px] rounded-full pointer-events-none" />
         
         <div className="container mx-auto px-6">
@@ -42,8 +45,8 @@ export default async function LandingPage() {
               </h2>
             </div>
             <p className="text-white/40 max-w-sm font-light leading-relaxed">
-              Explore the digital legacies of our most prolific creators. 
-              Each artifact is a unique system configuration.
+              The creative network is live. 
+              Explore the digital legacies of our first adopters.
             </p>
           </div>
           
@@ -85,52 +88,6 @@ export default async function LandingPage() {
                 <p className="text-luxury text-xs text-white/20">System Waiting for Data...</p>
               </div>
             )}
-          </div>
-        </div>
-      </section>
-
-      {/* Network Ecosystem Section (New) */}
-      <section className="py-32 bg-white/5 border-y border-white/5">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            <div>
-              <span className="text-luxury text-[10px] text-gold-500 mb-6 block">Connectivity</span>
-              <h2 className="text-4xl md:text-6xl font-serif font-light mb-8 leading-tight">
-                An Architecture <br/>of Connection
-              </h2>
-              <p className="text-white/50 text-lg font-light mb-10 leading-relaxed">
-                ArtifactOS isn't just a portfolio; it's a node in a creative network. 
-                Tag your crew, discover collaborators, and link your artifacts to build a shared legacy.
-              </p>
-              <div className="grid grid-cols-2 gap-8">
-                <div>
-                  <h4 className="text-gold-500 font-serif text-2xl mb-2">Networked</h4>
-                  <p className="text-white/30 text-sm">Every project links to a profile, creating a global web of talent.</p>
-                </div>
-                <div>
-                  <h4 className="text-gold-500 font-serif text-2xl mb-2">Cinematic</h4>
-                  <p className="text-white/30 text-sm">High-fidelity media hosting designed for visual storytellers.</p>
-                </div>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="aspect-square glass-strong rounded-[60px] flex items-center justify-center p-12 overflow-hidden border-white/10 group">
-                <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 to-transparent opacity-50" />
-                <div className="relative z-10 grid grid-cols-3 gap-4 w-full">
-                  {[...Array(9)].map((_, i) => (
-                    <div key={i} className="aspect-square glass rounded-2xl border-white/10 group-hover:border-gold-500/30 transition-all duration-500 transform group-hover:scale-105" 
-                         style={{ transitionDelay: `${i * 50}ms` }}/>
-                  ))}
-                </div>
-                {/* Connecting Lines Overlay (Concept) */}
-                <div className="absolute inset-0 pointer-events-none opacity-20 group-hover:opacity-40 transition-opacity">
-                  <svg className="w-full h-full" viewBox="0 0 400 400">
-                    <line x1="100" y1="100" x2="300" y2="300" stroke="#c9a84c" strokeWidth="1" />
-                    <line x1="300" y1="100" x2="100" y2="300" stroke="#c9a84c" strokeWidth="1" />
-                  </svg>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
