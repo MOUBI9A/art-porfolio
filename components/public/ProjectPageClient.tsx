@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Project } from '@/lib/types';
 import VideoPlayer from './VideoPlayer';
 
@@ -34,14 +35,15 @@ export default function ProjectPageClient({ project }: Props) {
 
       {/* Full-width thumbnail banner */}
       <div className="relative w-full overflow-hidden" style={{ height: '50vh', minHeight: 300 }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={
             project.thumbnail_url ??
             `https://placehold.co/1600x800/0a0a0a/1a1a1a?text=${encodeURIComponent(project.title)}`
           }
           alt={project.title}
-          className="w-full h-full object-cover"
+          fill
+          priority
+          className="object-cover"
           style={{ transform: 'scale(1.05)' }}
         />
         <div className="absolute inset-0 cinematic-overlay" />

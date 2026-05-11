@@ -107,7 +107,7 @@ export default function ContactSection({ settings }: Props) {
           style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
         >
           <p className="text-xs" style={{ color: 'rgba(255,255,255,0.2)', letterSpacing: '0.05em' }}>
-            © {new Date().getFullYear()} {settings?.name ?? 'DirectorOS'}. All rights reserved.
+            © {new Date().getFullYear()} {settings?.name ?? 'ArtifactOS'}. All rights reserved.
           </p>
         </motion.div>
       </div>

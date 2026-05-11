@@ -32,6 +32,7 @@ export default function SettingsFormClient({ settings, profile }: Props) {
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
+    username: profile?.username || '',
     name: settings?.name || '',
     bio: settings?.bio || '',
     email: settings?.email || '',
@@ -96,14 +97,14 @@ export default function SettingsFormClient({ settings, profile }: Props) {
     setLoading(true);
 
     try {
-      const { niche, ...settingsData } = formData;
+      const { niche, username, ...settingsData } = formData;
       
       const [settingsUpdate, profileUpdate] = await Promise.all([
         settings?.id 
           ? supabase.from('settings').update(settingsData).eq('id', settings.id)
           : supabase.from('settings').insert(settingsData),
         profile?.id
-          ? supabase.from('profiles').update({ niche }).eq('id', profile.id)
+          ? supabase.from('profiles').update({ niche, username }).eq('id', profile.id)
           : Promise.resolve({ error: null })
       ]);
 
@@ -236,6 +237,22 @@ export default function SettingsFormClient({ settings, profile }: Props) {
                   ))}
                 </div>
               </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-white/40 mb-2 uppercase tracking-wider">Public Username (URL)</label>
+              <div className="flex items-center">
+                <span className="text-white/40 bg-white/5 border border-white/10 border-r-0 rounded-l-lg px-3 py-3 text-sm">artifact.os/u/</span>
+                <input
+                  type="text"
+                  required
+                  placeholder="your-username"
+                  className="form-input rounded-l-none"
+                  value={formData.username}
+                  onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, '') }))}
+                />
+              </div>
+              <p className="text-[10px] mt-2 text-white/20 italic">This is your unique public profile link.</p>
             </div>
 
             <div>

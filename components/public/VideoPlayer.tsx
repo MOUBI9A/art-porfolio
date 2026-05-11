@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import { processVideoUrl } from '@/lib/video';
 
 interface Props {
@@ -23,14 +24,14 @@ export default function VideoPlayer({ videoUrl, thumbnailUrl, title }: Props) {
   if (!hasVideo || !videoUrl) {
     return (
       <div
-        className="w-full rounded-2xl overflow-hidden"
+        className="w-full rounded-2xl overflow-hidden relative"
         style={{ aspectRatio: '16/9', background: '#111' }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={placeholderThumb}
           alt={title}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
         />
       </div>
     );
@@ -50,11 +51,11 @@ export default function VideoPlayer({ videoUrl, thumbnailUrl, title }: Props) {
           className="absolute inset-0 w-full h-full group"
           aria-label={`Play ${title}`}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={placeholderThumb}
             alt={`${title} thumbnail`}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
           />
           {/* Overlay */}
           <div

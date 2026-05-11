@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Profile } from '@/lib/types';
+import LandingNav from '@/components/landing/LandingNav';
 import AppHero from '@/components/landing/AppHero';
 import BentoFeatures from '@/components/landing/BentoFeatures';
 import TemplateGrid from '@/components/landing/TemplateGrid';
@@ -31,7 +32,8 @@ export default async function LandingPage() {
   const { profiles } = await getFeaturedPortfolios();
 
   return (
-    <main className="bg-[#050505] min-h-screen text-white overflow-x-hidden selection:bg-white selection:text-black">
+    <main className="bg-[#050505] min-h-screen text-white overflow-x-hidden selection:bg-white selection:text-black relative">
+      <LandingNav />
       <AppHero />
       <BentoFeatures />
       <TemplateGrid />

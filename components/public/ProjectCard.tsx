@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Project } from '@/lib/types';
 
 interface Props {
@@ -35,12 +36,12 @@ export default function ProjectCard({ project }: Props) {
     >
       {/* Thumbnail */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={thumbnailSrc}
           alt={project.title}
-          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-          loading="lazy"
+          fill
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         
         {/* Gradient Overlay */}

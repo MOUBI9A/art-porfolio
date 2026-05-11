@@ -89,10 +89,10 @@ export default function Sidebar({ userEmail }: SidebarProps) {
             className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-black"
             style={{ background: 'var(--color-gold)' }}
           >
-            D
+            A
           </div>
           <span className="text-xl font-medium tracking-tight text-white" style={{ fontFamily: 'var(--font-playfair)' }}>
-            DirectorOS
+            ArtifactOS
           </span>
         </Link>
       </div>

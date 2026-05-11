@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { 
@@ -136,10 +137,15 @@ export default function ProjectsTableClient({ initialProjects }: Props) {
                           </div>
 
                           <div className="flex items-center gap-4 min-w-0">
-                            <div className="w-16 h-10 rounded overflow-hidden bg-charcoal-800 flex-shrink-0">
+                            <div className="relative w-16 h-10 rounded overflow-hidden bg-charcoal-800 flex-shrink-0">
                               {project.thumbnail_url ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={project.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                                <Image
+                                  src={project.thumbnail_url}
+                                  alt=""
+                                  fill
+                                  className="object-cover"
+                                  sizes="64px"
+                                />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center text-white/10 bg-white/5">
                                   <Film size={20} />

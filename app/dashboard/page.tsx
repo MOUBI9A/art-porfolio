@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import AnalyticsDashboard from '@/components/dashboard/AnalyticsDashboard';
 
@@ -129,12 +130,15 @@ export default async function DashboardPage() {
                 className="glass rounded-xl overflow-hidden flex items-center gap-4 p-4 transition-all duration-200 hover:border-white/10"
               >
                 {p.thumbnail_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={p.thumbnail_url}
-                    alt={p.title}
-                    className="w-16 h-12 object-cover rounded-lg flex-shrink-0"
-                  />
+                  <div className="relative w-16 h-12 rounded-lg overflow-hidden flex-shrink-0">
+                    <Image
+                      src={p.thumbnail_url}
+                      alt={p.title}
+                      fill
+                      className="object-cover"
+                      sizes="64px"
+                    />
+                  </div>
                 ) : (
                   <div
                     className="w-16 h-12 rounded-lg flex-shrink-0 flex items-center justify-center"

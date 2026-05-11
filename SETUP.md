@@ -1,6 +1,6 @@
-# 🎬 DirectorOS Setup Guide
+# 🎬 ArtifactOS Setup Guide
 
-Welcome to **DirectorOS**. Follow these steps to connect your Supabase project and get your cinematic portfolio live.
+Welcome to **ArtifactOS**. Follow these steps to connect your Supabase project and get your cinematic portfolio live.
 
 ---
 

@@ -19,9 +19,9 @@ const ModernMinimalist: React.FC<Props> = ({ profile, settings, projects, experi
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white selection:bg-white selection:text-black">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 px-10 py-8 flex justify-between items-center mix-blend-difference">
-        <span className="text-xl font-medium tracking-tighter">{profile.full_name}</span>
-        <div className="flex gap-8 text-xs uppercase tracking-widest font-medium opacity-60">
+      <nav className="fixed top-0 w-full z-50 px-6 sm:px-10 py-6 sm:py-8 flex justify-between items-center mix-blend-difference">
+        <span className="text-lg sm:text-xl font-medium tracking-tighter">{profile.full_name}</span>
+        <div className="hidden sm:flex gap-8 text-xs uppercase tracking-widest font-medium opacity-60">
           <a href="#work" className="hover:opacity-100 transition-opacity">Work</a>
           <a href="#about" className="hover:opacity-100 transition-opacity">About</a>
           <a href="#contact" className="hover:opacity-100 transition-opacity">Contact</a>
@@ -29,19 +29,19 @@ const ModernMinimalist: React.FC<Props> = ({ profile, settings, projects, experi
       </nav>
 
       {/* Hero */}
-      <section className="h-screen flex flex-col justify-center px-10 relative overflow-hidden">
+      <section className="h-screen flex flex-col justify-center px-6 sm:px-10 relative overflow-hidden">
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           className="relative z-10"
         >
-          <p className="text-xs uppercase tracking-[0.5em] mb-6 opacity-40 font-medium">Available for Projects — 2026</p>
-          <h1 className="text-[12vw] leading-[0.85] font-medium tracking-tighter uppercase mb-10">
+          <p className="text-[10px] sm:text-xs uppercase tracking-[0.5em] mb-4 sm:mb-6 opacity-40 font-medium">Available for Projects — 2026</p>
+          <h1 className="text-6xl sm:text-[12vw] leading-[0.85] font-medium tracking-tighter uppercase mb-8 sm:mb-10">
             {profile.niche.replace('_', ' ')}
           </h1>
-          <div className="flex flex-wrap gap-20 items-end">
-            <p className="max-w-md text-lg opacity-60 leading-relaxed">
+          <div className="flex flex-wrap gap-10 sm:gap-20 items-end">
+            <p className="max-w-md text-base sm:text-lg opacity-60 leading-relaxed">
               {settings?.hero_text || 'Creating visual narratives and digital experiences with a focus on cinematic aesthetics and technical precision.'}
             </p>
             <div className="flex flex-col gap-4">

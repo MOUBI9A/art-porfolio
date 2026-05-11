@@ -45,7 +45,7 @@ const OSDesktop: React.FC<OSDesktopProps> = ({ profile, settings, projects, expe
       </div>
 
       {/* Desktop Icons Grid */}
-      <div className="relative z-10 p-10 grid grid-cols-1 gap-8 w-fit h-fit max-h-[80vh]">
+      <div className="relative z-10 p-6 sm:p-10 grid grid-cols-2 sm:grid-cols-1 gap-6 sm:gap-8 w-fit h-fit max-h-[80vh]">
         <DesktopIcon 
           id="projects" 
           label={theme.labels.projects} 
@@ -117,7 +117,7 @@ const OSDesktop: React.FC<OSDesktopProps> = ({ profile, settings, projects, expe
             isFocused={focusedWindow === 'projects'}
             className="w-[800px] h-[500px]"
           >
-            <div className="p-6 grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                {projects.map(project => (
                  <div key={project.id} className="group cursor-pointer">
                     <div className="aspect-video bg-white/5 rounded-lg border border-white/10 overflow-hidden mb-2 relative">

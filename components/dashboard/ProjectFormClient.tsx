@@ -12,6 +12,7 @@ import {
   Loader2
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { Project, VideoType } from '@/lib/types';
 import { generateSlug } from '@/lib/slug';
@@ -296,8 +297,13 @@ export default function ProjectFormClient({ mode, project }: Props) {
                 
                 <div className="relative group cursor-pointer aspect-video rounded-xl overflow-hidden bg-white/5 border border-dashed border-white/10 hover:border-gold-500/50 transition-colors">
                   {formData.thumbnail_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={formData.thumbnail_url} alt="Thumbnail preview" className="w-full h-full object-cover" />
+                    <Image
+                      src={formData.thumbnail_url}
+                      alt="Thumbnail preview"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 30vw"
+                    />
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full text-white/20">
                       <ImageIcon size={32} strokeWidth={1.5} />

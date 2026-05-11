@@ -70,6 +70,18 @@ CREATE TABLE IF NOT EXISTS public.experience (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- Page Views Table (Analytics)
+CREATE TABLE IF NOT EXISTS public.page_views (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  profile_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  project_id UUID REFERENCES public.projects(id) ON DELETE SET NULL,
+  page_path TEXT NOT NULL,
+  referrer TEXT,
+  browser TEXT,
+  ip_hash TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
 -- ─── ROW LEVEL SECURITY (RLS) ────────────────────────────────────────────────
 
 -- Enable RLS
@@ -78,6 +90,14 @@ ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.project_collaborators ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.experience ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
+
+-- Page Views: Anonymous insert allowed, read only for the profile owner
+DROP POLICY IF EXISTS "Anonymous insert page_views" ON public.page_views;
+CREATE POLICY "Anonymous insert page_views" ON public.page_views FOR INSERT TO anon, authenticated WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Owner read page_views" ON public.page_views;
+CREATE POLICY "Owner read page_views" ON public.page_views FOR SELECT TO authenticated USING (auth.uid() = profile_id);
 
 -- Profiles: Anyone can read, only the user can write
 DROP POLICY IF EXISTS "Public read profiles" ON public.profiles;

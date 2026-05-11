@@ -16,18 +16,18 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: {
-    default: 'DirectorOS — Cinematic Portfolio',
-    template: '%s | DirectorOS',
+    default: 'ArtifactOS — Cinematic Portfolio SaaS',
+    template: '%s | ArtifactOS',
   },
   description:
-    'A premium cinematic portfolio for filmmakers, directors, and cinematographers.',
-  keywords: ['filmmaker', 'director', 'cinematographer', 'portfolio', 'showreel'],
+    'A premium cinematic portfolio platform for filmmakers, directors, programmers, and creatives.',
+  keywords: ['filmmaker', 'director', 'portfolio', 'showreel', 'saas'],
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    title: 'DirectorOS — Cinematic Portfolio',
+    title: 'ArtifactOS — Cinematic Portfolio SaaS',
     description:
-      'A premium cinematic portfolio for filmmakers, directors, and cinematographers.',
+      'A premium cinematic portfolio platform for filmmakers, directors, programmers, and creatives.',
   },
 };
 

@@ -155,7 +155,7 @@ export default function Hero({ settings }: HeroProps) {
             className="text-[10px] tracking-[0.5em] uppercase mb-8 font-medium"
             style={{ color: 'var(--color-gold)' }}
           >
-            {settings?.name ?? 'DirectorOS'} — Portfolio
+            {settings?.name ?? 'ArtifactOS'} — Portfolio
           </motion.p>
 
           {/* Hero text */}
