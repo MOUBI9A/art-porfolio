@@ -1,13 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 import { Profile } from '@/lib/types';
-import HeroSequence from '@/components/landing/HeroSequence';
-import StickyStatement from '@/components/landing/StickyStatement';
-import EngineFeatures from '@/components/landing/EngineFeatures';
-import PerspectiveShowcase from '@/components/landing/PerspectiveShowcase';
-import NetworkMatrix from '@/components/landing/NetworkMatrix';
-import TerminalCTA from '@/components/landing/TerminalCTA';
+import AppHero from '@/components/landing/AppHero';
+import BentoFeatures from '@/components/landing/BentoFeatures';
+import TemplateGrid from '@/components/landing/TemplateGrid';
+import NetworkGrid from '@/components/landing/NetworkGrid';
+import FooterCTA from '@/components/landing/FooterCTA';
 
-// Revalidate every 60 seconds (ISR)
 export const revalidate = 60;
 
 async function getFeaturedPortfolios(): Promise<{ profiles: Profile[] }> {
@@ -34,23 +32,11 @@ export default async function LandingPage() {
 
   return (
     <main className="bg-[#050505] min-h-screen text-white overflow-x-hidden selection:bg-white selection:text-black">
-      {/* 1. Hero Boot Sequence */}
-      <HeroSequence />
-
-      {/* 2. Sticky Manifest Statements */}
-      <StickyStatement />
-
-      {/* 3. The Engine Room (Features) */}
-      <EngineFeatures />
-
-      {/* 4. Perspective Engine (Templates) */}
-      <PerspectiveShowcase />
-
-      {/* 5. The Creative Network (Social Proof) */}
-      <NetworkMatrix profiles={profiles} />
-
-      {/* 6. Terminal Call to Action */}
-      <TerminalCTA />
+      <AppHero />
+      <BentoFeatures />
+      <TemplateGrid />
+      <NetworkGrid profiles={profiles} />
+      <FooterCTA />
     </main>
   );
 }
