@@ -13,7 +13,8 @@ import {
   Loader2,
   Check,
   Info,
-  RotateCcw
+  RotateCcw,
+  AlertTriangle
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Settings, Profile, Niche } from '@/lib/types';
@@ -464,6 +465,42 @@ export default function SettingsFormClient({ settings, profile }: Props) {
           </section>
         </div>
       </div>
+
+      {/* Danger Zone */}
+      <section className="pt-12 border-t border-red-500/10">
+        <div className="flex items-center gap-2 mb-6">
+          <AlertTriangle size={16} className="text-red-500" />
+          <h2 className="text-xs tracking-widest uppercase text-red-500/60 font-semibold">Danger Zone</h2>
+        </div>
+
+        <div className="glass p-8 rounded-2xl border border-red-500/10 bg-red-500/[0.02]">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <h3 className="text-sm font-bold text-white uppercase tracking-tight mb-1">Delete Identity</h3>
+              <p className="text-xs text-white/40 max-w-md">
+                Permanently remove your ArtifactOS profile, projects, and data. This action is irreversible and will immediately cease all public site availability.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={async () => {
+                if (confirm('CRITICAL: This will permanently delete your identity and all associated artifacts. Are you absolutely sure?')) {
+                  const { error } = await supabase.rpc('delete_user_data');
+                  if (error) {
+                    toast.error('System restriction: Contact administrator.');
+                  } else {
+                    await supabase.auth.signOut();
+                    router.push('/');
+                  }
+                }
+              }}
+              className="px-6 py-2.5 rounded-lg border border-red-500/20 text-red-500 text-xs font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all"
+            >
+              Exterminate Account
+            </button>
+          </div>
+        </div>
+      </section>
     </form>
   );
 }
