@@ -74,7 +74,10 @@ export async function generateMetadata({ params }: { params: Promise<{ username:
 
   const name = profile.full_name || profile.username;
   const description = settings?.bio || `Explore the professional portfolio of ${name}. Built with ArtifactOS.`;
-  const ogImage = `/api/og?username=${username}`;
+  
+  // Construct absolute URL for the OG image
+  const baseUrl = process.env.NEXT_PUBLIC_MAIN_DOMAIN ? `https://${process.env.NEXT_PUBLIC_MAIN_DOMAIN}` : 'https://artifact-os.vercel.app';
+  const ogImage = `${baseUrl}/api/og?username=${username}`;
 
   return {
     title: `${name} | ArtifactOS`,
@@ -83,7 +86,7 @@ export async function generateMetadata({ params }: { params: Promise<{ username:
       title: `${name} | ArtifactOS`,
       description: description,
       type: 'website',
-      images: [{ url: ogImage }],
+      images: [{ url: ogImage, width: 1200, height: 630 }],
     },
     twitter: {
       card: 'summary_large_image',
