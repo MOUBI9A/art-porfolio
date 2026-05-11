@@ -213,17 +213,28 @@ export default function SettingsFormClient({ settings, profile }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-white/40 mb-3 uppercase tracking-wider">OS Template Style</label>
-                <select 
-                  className="form-input"
-                  value={formData.template_id || 'classic'}
-                  onChange={(e) => setFormData(prev => ({ ...prev, template_id: e.target.value }))}
-                >
-                  <option value="classic">Cinematic OS (Classic)</option>
-                  <option value="terminal">Terminal OS (Hacker)</option>
-                  <option value="gallery">Gallery OS (Minimal)</option>
-                  <option value="studio">Studio OS (Vibrant)</option>
-                </select>
+                <label className="block text-xs font-medium text-white/40 mb-3 uppercase tracking-wider">Portfolio Template Style</label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {[
+                    { id: 'classic', name: 'Cinematic OS', desc: 'Interactive Desktop' },
+                    { id: 'modern', name: 'Modern Minimal', desc: 'Sleek Landing' },
+                    { id: 'brutalist', name: 'Brutalist Grid', desc: 'Raw & Bold' }
+                  ].map((tpl) => (
+                    <button
+                      key={tpl.id}
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, template_id: tpl.id }))}
+                      className={`p-4 rounded-xl border text-left transition-all ${
+                        formData.template_id === tpl.id 
+                          ? 'bg-white/10 border-white/20 ring-1 ring-white/20' 
+                          : 'bg-white/5 border-white/10 opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      <span className="block text-sm font-bold text-white uppercase tracking-tight">{tpl.name}</span>
+                      <span className="block text-[10px] text-white/40 uppercase tracking-widest mt-1">{tpl.desc}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 

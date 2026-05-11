@@ -32,7 +32,7 @@ async function getPortfolioData(username: string): Promise<{
       supabase.from('settings').select('*').eq('user_id', profile.id).single(),
       supabase
         .from('projects')
-        .select('*')
+        .select('*, project_collaborators(*, profile:profiles(*))')
         .eq('user_id', profile.id)
         .order('display_order', { ascending: true })
         .order('created_at', { ascending: false }),
@@ -57,6 +57,8 @@ async function getPortfolioData(username: string): Promise<{
 }
 
 import OSDesktop from '@/components/portfolio/OSDesktop';
+import ModernMinimalist from '@/components/portfolio/ModernMinimalist';
+import BrutalistGrid from '@/components/portfolio/BrutalistGrid';
 
 export default async function UserPortfolioPage({ params }: { params: { username: string } }) {
   const { username } = params;
@@ -66,6 +68,32 @@ export default async function UserPortfolioPage({ params }: { params: { username
     notFound();
   }
 
+  // Determine which template to use
+  const templateId = settings?.template_id || 'classic';
+
+  if (templateId === 'modern') {
+    return (
+      <ModernMinimalist
+        profile={profile}
+        settings={settings}
+        projects={projects}
+        experience={experience}
+      />
+    );
+  }
+
+  if (templateId === 'brutalist') {
+    return (
+      <BrutalistGrid
+        profile={profile}
+        settings={settings}
+        projects={projects}
+        experience={experience}
+      />
+    );
+  }
+
+  // Default to OSDesktop
   return (
     <OSDesktop 
       profile={profile} 

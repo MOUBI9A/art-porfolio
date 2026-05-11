@@ -46,6 +46,11 @@ export default function Sidebar({ userEmail }: SidebarProps) {
       icon: Film 
     },
     { 
+      label: 'Experience', 
+      href: '/dashboard/experience', 
+      icon: User 
+    },
+    { 
       label: 'Site Settings', 
       href: '/dashboard/settings', 
       icon: Settings 
