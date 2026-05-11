@@ -1,18 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// We use the standard supabase-js client here because this is a public API route
-// and doesn't need the SSR/Cookie complexities of the auth client for read-only data.
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Initialize supabase lazily to avoid build-time errors if env vars are missing
+let supabaseInstance: any = null;
+const getSupabase = () => {
+  if (!supabaseInstance) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Supabase environment variables are missing');
+    }
+    supabaseInstance = createClient(supabaseUrl, supabaseKey);
+  }
+  return supabaseInstance;
+};
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { username: string } }
+  { params }: { params: Promise<{ username: string }> }
 ) {
   try {
-    const { username } = params;
+    const { username } = await params;
+    const supabase = getSupabase();
 
     if (!username) {
       return NextResponse.json({ error: 'Username is required' }, { status: 400 });
@@ -60,7 +69,7 @@ export async function GET(
         niche: profile.niche,
         avatar: profile.avatar_url,
       },
-      projects: projects.map(p => ({
+      projects: projects.map((p: any) => ({
         id: p.id,
         title: p.title,
         slug: p.slug,
