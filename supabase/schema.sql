@@ -52,7 +52,9 @@ CREATE TABLE IF NOT EXISTS public.settings (
   accent_color TEXT DEFAULT '#c9a84c',
   bg_color TEXT DEFAULT '#0a0a0a',
   font_family TEXT DEFAULT 'playfair',
-  grain_opacity NUMERIC DEFAULT 0.05
+  grain_opacity NUMERIC DEFAULT 0.05,
+  template_id TEXT DEFAULT 'classic',
+  custom_domain TEXT UNIQUE
 );
 
 -- Experience Table

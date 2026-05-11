@@ -1,5 +1,14 @@
 -- ─── MASTER DEMO DATA (ArtifactOS Showpiece) ──────────────────────────────────
--- Note: Replace '<USER_ID>' with a real user ID from auth.users to test locally.
+
+-- 0. AUTH USERS (Dummy entries for FK constraints)
+-- Note: In production, these should be real users.
+INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token)
+VALUES
+  ('00000000-0000-0000-0000-000000000001', 'master@artifact.os', '', now(), '{"provider":"email","providers":["email"]}', '{}', now(), now(), '', '', '', ''),
+  ('00000000-0000-0000-0000-000000000002', 'zombie@artifact.os', '', now(), '{"provider":"email","providers":["email"]}', '{}', now(), now(), '', '', '', ''),
+  ('00000000-0000-0000-0000-000000000003', 'elara@artifact.os', '', now(), '{"provider":"email","providers":["email"]}', '{}', now(), now(), '', '', '', ''),
+  ('00000000-0000-0000-0000-000000000004', 'kai@artifact.os', '', now(), '{"provider":"email","providers":["email"]}', '{}', now(), now(), '', '', '', '')
+ON CONFLICT (id) DO NOTHING;
 
 -- 1. PROFILES
 INSERT INTO public.profiles (id, username, full_name, avatar_url, niche, role) VALUES
