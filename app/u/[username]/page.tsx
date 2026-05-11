@@ -59,9 +59,10 @@ async function getPortfolioData(username: string): Promise<{
 import OSDesktop from '@/components/portfolio/OSDesktop';
 import ModernMinimalist from '@/components/portfolio/ModernMinimalist';
 import BrutalistGrid from '@/components/portfolio/BrutalistGrid';
+import AnalyticsTracker from '@/components/public/AnalyticsTracker';
 
-export default async function UserPortfolioPage({ params }: { params: { username: string } }) {
-  const { username } = params;
+export default async function UserPortfolioPage({ params }: { params: Promise<{ username: string }> }) {
+  const { username } = await params;
   const { profile, settings, projects, experience } = await getPortfolioData(username);
 
   if (!profile) {
@@ -71,8 +72,9 @@ export default async function UserPortfolioPage({ params }: { params: { username
   // Determine which template to use
   const templateId = settings?.template_id || 'classic';
 
+  let content;
   if (templateId === 'modern') {
-    return (
+    content = (
       <ModernMinimalist
         profile={profile}
         settings={settings}
@@ -80,10 +82,8 @@ export default async function UserPortfolioPage({ params }: { params: { username
         experience={experience}
       />
     );
-  }
-
-  if (templateId === 'brutalist') {
-    return (
+  } else if (templateId === 'brutalist') {
+    content = (
       <BrutalistGrid
         profile={profile}
         settings={settings}
@@ -91,15 +91,22 @@ export default async function UserPortfolioPage({ params }: { params: { username
         experience={experience}
       />
     );
+  } else {
+    // Default to OSDesktop
+    content = (
+      <OSDesktop 
+        profile={profile} 
+        settings={settings} 
+        projects={projects} 
+        experience={experience} 
+      />
+    );
   }
 
-  // Default to OSDesktop
   return (
-    <OSDesktop 
-      profile={profile} 
-      settings={settings} 
-      projects={projects} 
-      experience={experience} 
-    />
+    <>
+      <AnalyticsTracker profileId={profile.id} />
+      {content}
+    </>
   );
 }

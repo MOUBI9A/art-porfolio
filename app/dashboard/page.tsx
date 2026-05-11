@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import AnalyticsDashboard from '@/components/dashboard/AnalyticsDashboard';
 
 export const metadata: Metadata = { title: 'Dashboard' };
 
@@ -25,10 +26,6 @@ export default async function DashboardPage() {
 
   const recentProjects = recentProjectsData as any[];
 
-  const stats = [
-    { label: 'My Projects', value: projectCount ?? 0, href: '/dashboard/projects' },
-  ];
-
   return (
     <div className="p-8 max-w-5xl w-full">
       {/* Header */}
@@ -47,23 +44,20 @@ export default async function DashboardPage() {
         </h1>
       </div>
 
-      {/* Stats */}
+      {/* Stats Summary & Quick Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-        {stats.map((stat) => (
-          <Link
-            key={stat.label}
-            href={stat.href}
-            className="glass-strong rounded-xl p-6 hover:border-gold-500 transition-colors duration-200"
-            style={{ borderColor: 'rgba(201,168,76,0.15)' }}
-          >
-            <p className="text-sm mb-2" style={{ color: 'var(--color-text-muted)' }}>
-              {stat.label}
-            </p>
-            <p className="text-4xl font-light" style={{ color: '#fff', fontFamily: 'var(--font-playfair)' }}>
-              {stat.value}
-            </p>
-          </Link>
-        ))}
+        <Link
+          href="/dashboard/projects"
+          className="glass-strong rounded-xl p-6 hover:border-gold-500 transition-colors duration-200"
+          style={{ borderColor: 'rgba(201,168,76,0.15)' }}
+        >
+          <p className="text-sm mb-2" style={{ color: 'var(--color-text-muted)' }}>
+            My Projects
+          </p>
+          <p className="text-4xl font-light" style={{ color: '#fff', fontFamily: 'var(--font-playfair)' }}>
+            {projectCount ?? 0}
+          </p>
+        </Link>
 
         <Link
           href="/dashboard/projects/new"
@@ -90,8 +84,11 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
+      {/* Analytics Visualization */}
+      <AnalyticsDashboard />
+
       {/* Recent projects */}
-      <div>
+      <div className="mt-10">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-sm font-medium tracking-widest uppercase" style={{ color: 'var(--color-text-muted)' }}>
             Recent Projects
