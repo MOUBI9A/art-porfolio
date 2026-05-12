@@ -4,7 +4,7 @@ import React from 'react';
 import { Profile, Settings, Project, Experience } from '@/lib/types';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Instagram, Mail, Phone, ArrowUpRight } from 'lucide-react';
+import { Instagram, Mail, Phone, ArrowUpRight, Linkedin, Twitter, Video, Globe } from 'lucide-react';
 
 interface Props {
   profile: Profile;
@@ -45,10 +45,30 @@ const ModernMinimalist: React.FC<Props> = ({ profile, settings, projects, experi
               {settings?.hero_text || 'Creating visual narratives and digital experiences with a focus on cinematic aesthetics and technical precision.'}
             </p>
             <div className="flex flex-col gap-4">
-               <div className="flex gap-4">
+               <div className="flex flex-wrap gap-4">
                   {settings?.instagram && (
-                    <a href={`https://instagram.com/${settings.instagram}`} className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all">
+                    <a href={`https://instagram.com/${settings.instagram}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all">
                       <Instagram size={20} />
+                    </a>
+                  )}
+                  {settings?.social_linkedin && (
+                    <a href={settings.social_linkedin} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all">
+                      <Linkedin size={20} />
+                    </a>
+                  )}
+                  {settings?.social_x && (
+                    <a href={settings.social_x} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all">
+                      <Twitter size={20} />
+                    </a>
+                  )}
+                  {settings?.social_vimeo && (
+                    <a href={settings.social_vimeo} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all">
+                      <Video size={20} />
+                    </a>
+                  )}
+                  {settings?.social_website && (
+                    <a href={settings.social_website} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all">
+                      <Globe size={20} />
                     </a>
                   )}
                   {settings?.email && (
@@ -177,8 +197,13 @@ const ModernMinimalist: React.FC<Props> = ({ profile, settings, projects, experi
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-widest opacity-40 mb-4">Social</p>
-              <p className="text-lg hover:underline cursor-pointer">Instagram</p>
-              <p className="text-lg hover:underline cursor-pointer">LinkedIn</p>
+              <div className="flex flex-col gap-2">
+                {settings?.instagram && <a href={`https://instagram.com/${settings.instagram}`} target="_blank" rel="noopener noreferrer" className="text-lg hover:text-gold-500 transition-colors">Instagram</a>}
+                {settings?.social_linkedin && <a href={settings.social_linkedin} target="_blank" rel="noopener noreferrer" className="text-lg hover:text-gold-500 transition-colors">LinkedIn</a>}
+                {settings?.social_x && <a href={settings.social_x} target="_blank" rel="noopener noreferrer" className="text-lg hover:text-gold-500 transition-colors">X (Twitter)</a>}
+                {settings?.social_vimeo && <a href={settings.social_vimeo} target="_blank" rel="noopener noreferrer" className="text-lg hover:text-gold-500 transition-colors">Vimeo</a>}
+                {settings?.social_website && <a href={settings.social_website} target="_blank" rel="noopener noreferrer" className="text-lg hover:text-gold-500 transition-colors">Website</a>}
+              </div>
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-widest opacity-40 mb-4">Location</p>

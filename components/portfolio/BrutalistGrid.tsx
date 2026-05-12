@@ -4,6 +4,7 @@ import React from 'react';
 import { Profile, Settings, Project, Experience } from '@/lib/types';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { Instagram, Linkedin, Twitter, Video, Globe, Mail, Phone } from 'lucide-react';
 
 interface Props {
   profile: Profile;
@@ -26,7 +27,7 @@ const BrutalistGrid: React.FC<Props> = ({ profile, settings, projects, experienc
         <div className="flex flex-wrap gap-4">
           <a href="#projects" className="border-2 border-black px-6 py-2 hover:bg-black hover:text-white transition-colors font-bold uppercase text-sm">Projects</a>
           <a href="#about" className="border-2 border-black px-6 py-2 hover:bg-black hover:text-white transition-colors font-bold uppercase text-sm">About</a>
-          <a href="mailto:contact@artifact.os" className="bg-black text-white px-6 py-2 hover:bg-transparent hover:text-black border-2 border-black transition-colors font-bold uppercase text-sm">Hire Me</a>
+          <a href={`mailto:${settings?.email || 'contact@artifact.os'}`} className="bg-black text-white px-6 py-2 hover:bg-transparent hover:text-black border-2 border-black transition-colors font-bold uppercase text-sm">Hire Me</a>
         </div>
       </header>
 
@@ -50,7 +51,6 @@ const BrutalistGrid: React.FC<Props> = ({ profile, settings, projects, experienc
                <Image 
                 src={settings.profile_url} 
                 alt={profile.full_name || profile.username || 'Portfolio Avatar'}
- 
                 fill 
                 className="object-cover grayscale hover:grayscale-0 transition-all duration-500 scale-110 group-hover:scale-100"
                />
@@ -136,10 +136,14 @@ const BrutalistGrid: React.FC<Props> = ({ profile, settings, projects, experienc
 
       <footer className="p-8 bg-black text-white text-center">
         <p className="text-6xl md:text-[15vw] font-black uppercase tracking-tighter leading-none mb-12">CONTACT</p>
-        <div className="flex flex-wrap justify-center gap-12 mb-20 text-xl font-black uppercase">
-          <a href={`mailto:${settings?.email}`} className="hover:text-[#ffff00] transition-colors">{settings?.email}</a>
-          <a href={`tel:${settings?.phone}`} className="hover:text-[#ffff00] transition-colors">{settings?.phone}</a>
-          <a href={`https://instagram.com/${settings?.instagram}`} className="hover:text-[#ffff00] transition-colors">@ {settings?.instagram}</a>
+        <div className="flex flex-wrap justify-center gap-x-12 gap-y-6 mb-20 text-xl font-black uppercase">
+          {settings?.email && <a href={`mailto:${settings.email}`} className="hover:text-[#ffff00] transition-colors">{settings.email}</a>}
+          {settings?.phone && <a href={`tel:${settings.phone}`} className="hover:text-[#ffff00] transition-colors">{settings.phone}</a>}
+          {settings?.instagram && <a href={`https://instagram.com/${settings.instagram}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#ffff00] transition-colors">Instagram</a>}
+          {settings?.social_linkedin && <a href={settings.social_linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-[#ffff00] transition-colors">LinkedIn</a>}
+          {settings?.social_x && <a href={settings.social_x} target="_blank" rel="noopener noreferrer" className="hover:text-[#ffff00] transition-colors">X_Identity</a>}
+          {settings?.social_vimeo && <a href={settings.social_vimeo} target="_blank" rel="noopener noreferrer" className="hover:text-[#ffff00] transition-colors">Vimeo</a>}
+          {settings?.social_website && <a href={settings.social_website} target="_blank" rel="noopener noreferrer" className="hover:text-[#ffff00] transition-colors">Web_Portal</a>}
         </div>
         <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest pt-8 border-t border-white/20">
           <span>{profile.full_name} © 2026</span>

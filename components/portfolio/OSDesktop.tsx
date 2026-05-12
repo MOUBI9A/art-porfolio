@@ -6,6 +6,7 @@ import OSWindow from './OSWindow';
 import DesktopIcon from './DesktopIcon';
 import OSTaskbar from './OSTaskbar';
 import Image from 'next/image';
+import { Instagram, Linkedin, Twitter, Video, Globe, Mail, Phone, User } from 'lucide-react';
 
 interface OSDesktopProps {
   profile: Profile;
@@ -153,6 +154,73 @@ const OSDesktop: React.FC<OSDesktopProps> = ({ profile, settings, projects, expe
                     )}
                  </div>
                ))}
+            </div>
+          </OSWindow>
+        )}
+
+        {openWindows.includes('contact') && (
+          <OSWindow 
+            id="contact" 
+            title="Connect.link — Contact"
+            onClose={() => toggleWindow('contact')}
+            onFocus={() => setFocusedWindow('contact')}
+            isFocused={focusedWindow === 'contact'}
+            isLight={theme.isLight}
+            className="w-[400px] h-[450px]"
+          >
+            <div className="p-8 flex flex-col items-center text-center space-y-6">
+              <div className="w-20 h-20 rounded-full border-2 border-gold-500 overflow-hidden relative">
+                {settings?.profile_url ? (
+                  <Image src={settings.profile_url} alt="profile" fill className="object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-white/5 flex items-center justify-center">
+                    <User size={32} className="text-white/20" />
+                  </div>
+                )}
+              </div>
+              <div>
+                <h3 className="text-xl font-bold uppercase">{profile.full_name}</h3>
+                <p className="text-[10px] text-gold-500 uppercase tracking-widest">{profile.niche}</p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3 w-full">
+                {settings?.email && (
+                  <a href={`mailto:${settings.email}`} className="flex flex-col items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5 hover:border-white/20 transition-all">
+                    <Mail size={18} className="text-gold-500" />
+                    <span className="text-[10px] uppercase font-bold tracking-tighter">Email</span>
+                  </a>
+                )}
+                {settings?.instagram && (
+                  <a href={`https://instagram.com/${settings.instagram}`} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5 hover:border-white/20 transition-all">
+                    <Instagram size={18} className="text-gold-500" />
+                    <span className="text-[10px] uppercase font-bold tracking-tighter">Instagram</span>
+                  </a>
+                )}
+                {settings?.social_linkedin && (
+                  <a href={settings.social_linkedin} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5 hover:border-white/20 transition-all">
+                    <Linkedin size={18} className="text-gold-500" />
+                    <span className="text-[10px] uppercase font-bold tracking-tighter">LinkedIn</span>
+                  </a>
+                )}
+                {settings?.social_x && (
+                  <a href={settings.social_x} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5 hover:border-white/20 transition-all">
+                    <Twitter size={18} className="text-gold-500" />
+                    <span className="text-[10px] uppercase font-bold tracking-tighter">X_Identity</span>
+                  </a>
+                )}
+                {settings?.social_vimeo && (
+                  <a href={settings.social_vimeo} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5 hover:border-white/20 transition-all">
+                    <Video size={18} className="text-gold-500" />
+                    <span className="text-[10px] uppercase font-bold tracking-tighter">Vimeo</span>
+                  </a>
+                )}
+                {settings?.social_website && (
+                  <a href={settings.social_website} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5 hover:border-white/20 transition-all">
+                    <Globe size={18} className="text-gold-500" />
+                    <span className="text-[10px] uppercase font-bold tracking-tighter">Web_Portal</span>
+                  </a>
+                )}
+              </div>
             </div>
           </OSWindow>
         )}

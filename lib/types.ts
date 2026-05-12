@@ -38,6 +38,10 @@ export interface Settings {
   email: string | null;
   phone: string | null;
   instagram: string | null;
+  social_linkedin: string | null;
+  social_vimeo: string | null;
+  social_x: string | null;
+  social_website: string | null;
   hero_text: string | null;
   hero_video_url: string | null;
   profile_url: string | null;
@@ -92,6 +96,10 @@ export type SettingsFormData = {
   email: string;
   phone: string;
   instagram: string;
+  social_linkedin: string;
+  social_vimeo: string;
+  social_x: string;
+  social_website: string;
   hero_text: string;
   hero_video_url: string;
   accent_color: string;

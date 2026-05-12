@@ -8,6 +8,9 @@ import {
   Mail, 
   Phone, 
   Instagram, 
+  Linkedin,
+  Twitter,
+  Globe,
   Type, 
   Video,
   Loader2,
@@ -39,6 +42,10 @@ export default function SettingsFormClient({ settings, profile }: Props) {
     email: settings?.email || '',
     phone: settings?.phone || '',
     instagram: settings?.instagram || '',
+    social_linkedin: settings?.social_linkedin || '',
+    social_vimeo: settings?.social_vimeo || '',
+    social_x: settings?.social_x || '',
+    social_website: settings?.social_website || '',
     hero_text: settings?.hero_text || '',
     hero_video_url: settings?.hero_video_url || '',
     profile_url: settings?.profile_url || '',
@@ -307,10 +314,54 @@ export default function SettingsFormClient({ settings, profile }: Props) {
                 <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20" size={16} />
                 <input
                   type="text"
-                  placeholder="Instagram handle (without @)"
+                  placeholder="Instagram handle"
                   className="form-input pl-10"
                   value={formData.instagram}
                   onChange={(e) => setFormData(prev => ({ ...prev, instagram: e.target.value }))}
+                />
+              </div>
+
+              <div className="relative">
+                <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20" size={16} />
+                <input
+                  type="url"
+                  placeholder="LinkedIn Profile URL"
+                  className="form-input pl-10"
+                  value={formData.social_linkedin}
+                  onChange={(e) => setFormData(prev => ({ ...prev, social_linkedin: e.target.value }))}
+                />
+              </div>
+
+              <div className="relative">
+                <Twitter className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20" size={16} />
+                <input
+                  type="url"
+                  placeholder="X (Twitter) URL"
+                  className="form-input pl-10"
+                  value={formData.social_x}
+                  onChange={(e) => setFormData(prev => ({ ...prev, social_x: e.target.value }))}
+                />
+              </div>
+
+              <div className="relative">
+                <Video className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20" size={16} />
+                <input
+                  type="url"
+                  placeholder="Vimeo Profile URL"
+                  className="form-input pl-10"
+                  value={formData.social_vimeo}
+                  onChange={(e) => setFormData(prev => ({ ...prev, social_vimeo: e.target.value }))}
+                />
+              </div>
+
+              <div className="relative">
+                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20" size={16} />
+                <input
+                  type="url"
+                  placeholder="Personal Website URL"
+                  className="form-input pl-10"
+                  value={formData.social_website}
+                  onChange={(e) => setFormData(prev => ({ ...prev, social_website: e.target.value }))}
                 />
               </div>
             </div>
