@@ -10,10 +10,25 @@ import FooterCTA from '@/components/landing/FooterCTA';
 export const revalidate = 60;
 
 async function getFeaturedPortfolios(): Promise<{ profiles: Profile[] }> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !supabaseKey) return { profiles: [] };
+
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
+      },
+      global: {
+        fetch: (input, init) =>
+          fetch(input, {
+            ...init,
+            signal: AbortSignal.timeout(2_000),
+          }),
+      },
+    });
 
     const { data: profiles } = await supabase
       .from('profiles')
@@ -22,8 +37,9 @@ async function getFeaturedPortfolios(): Promise<{ profiles: Profile[] }> {
       .order('created_at', { ascending: false });
 
     return { profiles: profiles ?? [] };
-  } catch (error) {
-    console.error('Error fetching featured portfolios:', error);
+  } catch {
+    // Featured profiles are progressive enhancement. The marketing page should
+    // stay available even if the portfolio data service is unavailable.
     return { profiles: [] };
   }
 }
