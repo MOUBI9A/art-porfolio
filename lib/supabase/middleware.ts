@@ -1,51 +1,70 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
-import { Database } from '@/lib/types';
+
+const AUTH_TIMEOUT_MS = 1200;
+
+const fetchWithTimeout: typeof fetch = (input, init) =>
+  fetch(input, {
+    ...init,
+    signal: AbortSignal.timeout(AUTH_TIMEOUT_MS),
+  });
 
 /**
- * Supabase middleware helper — refreshes auth session on every request.
- * Must be called in middleware.ts to keep the session alive.
+ * Refresh the auth session only for routes whose behavior depends on auth.
+ * Network failures fail fast so a degraded auth provider cannot stall requests.
  */
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
-
-  const supabase = createServerClient<any>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet: any[]) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
-          );
-          supabaseResponse = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options),
-          );
-        },
-      },
-    },
-  );
-
-  // Refresh session (important — do not remove!)
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   const { pathname } = request.nextUrl;
 
-  // Protect all /dashboard routes
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    if (pathname.startsWith('/dashboard')) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = '/auth/login';
+      loginUrl.searchParams.set('redirectTo', pathname);
+      loginUrl.searchParams.set('error', 'auth_unavailable');
+      return NextResponse.redirect(loginUrl);
+    }
+    return supabaseResponse;
+  }
+
+  const supabase = createServerClient<any>(supabaseUrl, supabaseKey, {
+    global: { fetch: fetchWithTimeout },
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet: any[]) {
+        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+        supabaseResponse = NextResponse.next({ request });
+        cookiesToSet.forEach(({ name, value, options }) =>
+          supabaseResponse.cookies.set(name, value, options),
+        );
+      },
+    },
+  });
+
+  let user = null;
+  let authUnavailable = false;
+  try {
+    const result = await supabase.auth.getUser();
+    user = result.data.user;
+  } catch (error) {
+    authUnavailable = true;
+    console.warn('Supabase auth unavailable; failing fast.', error);
+  }
+
   if (pathname.startsWith('/dashboard') && !user) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = '/auth/login';
     loginUrl.searchParams.set('redirectTo', pathname);
+    if (authUnavailable) loginUrl.searchParams.set('error', 'auth_unavailable');
     return NextResponse.redirect(loginUrl);
   }
 
-  // Redirect authenticated users away from login page
   if (pathname.startsWith('/auth/login') && user) {
     const dashboardUrl = request.nextUrl.clone();
     dashboardUrl.pathname = '/dashboard';

@@ -4,42 +4,42 @@ import { updateSession } from '@/lib/supabase/middleware';
 export async function proxy(request: NextRequest) {
   const url = request.nextUrl;
   const host = request.headers.get('host') || '';
+  const { pathname } = url;
 
-  // 1. Skip system/internal paths immediately
+  // Public/system routes must never wait on the auth provider. This keeps the
+  // marketing site, public portfolios and static assets available even when
+  // Supabase is degraded or temporarily unreachable.
   if (
-    url.pathname.startsWith('/_next') || 
-    url.pathname.startsWith('/api') || 
-    url.pathname.startsWith('/u/') || 
-    url.pathname === '/favicon.ico'
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/u/') ||
+    pathname === '/favicon.ico'
   ) {
-    return await updateSession(request);
+    return NextResponse.next();
   }
 
-  // 2. Define main domain
   const mainDomain = process.env.NEXT_PUBLIC_MAIN_DOMAIN || 'artifact.os';
-  
-  // 3. Extract subdomain (e.g., username.artifact.os)
-  const subdomain = host.endsWith(`.${mainDomain}`) 
-    ? host.replace(`.${mainDomain}`, '') 
+  const subdomain = host.endsWith(`.${mainDomain}`)
+    ? host.replace(`.${mainDomain}`, '')
     : null;
 
-  // 4. If we have a valid user subdomain (not www), rewrite to /u/[username]
+  // Public creator subdomains are rewrites, not authenticated dashboard routes.
   if (subdomain && subdomain !== 'www') {
-    url.pathname = `/u/${subdomain}${url.pathname}`;
+    url.pathname = `/u/${subdomain}${pathname}`;
     return NextResponse.rewrite(url);
   }
 
-  // 5. Otherwise, proceed with session update (Dashboard protection etc)
-  return await updateSession(request);
+  // Only routes whose behavior actually depends on authentication should pay
+  // the cost of refreshing/verifying a Supabase session.
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/auth/login')) {
+    return updateSession(request);
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static, _next/image (Next.js internals)
-     * - favicon.ico, public assets
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

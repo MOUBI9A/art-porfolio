@@ -9,21 +9,31 @@ import FooterCTA from '@/components/landing/FooterCTA';
 
 export const revalidate = 60;
 
+const FEATURED_PORTFOLIO_TIMEOUT_MS = 750;
+
 async function getFeaturedPortfolios(): Promise<{ profiles: Profile[] }> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  // The landing page is public marketing content. Optional community data must
+  // never become a hard dependency for rendering it.
+  if (!supabaseUrl || !supabaseKey) {
+    return { profiles: [] };
+  }
+
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { data: profiles } = await supabase
       .from('profiles')
       .select('*')
       .limit(8)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .abortSignal(AbortSignal.timeout(FEATURED_PORTFOLIO_TIMEOUT_MS));
 
     return { profiles: profiles ?? [] };
   } catch (error) {
-    console.error('Error fetching featured portfolios:', error);
+    console.warn('Featured portfolios unavailable; rendering landing fallback.', error);
     return { profiles: [] };
   }
 }
