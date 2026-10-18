@@ -48,10 +48,12 @@ export async function updateSession(request: NextRequest) {
   });
 
   let user = null;
+  let authUnavailable = false;
   try {
     const result = await supabase.auth.getUser();
     user = result.data.user;
   } catch (error) {
+    authUnavailable = true;
     console.warn('Supabase auth unavailable; failing fast.', error);
   }
 
@@ -59,7 +61,7 @@ export async function updateSession(request: NextRequest) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = '/auth/login';
     loginUrl.searchParams.set('redirectTo', pathname);
-    if (!user) loginUrl.searchParams.set('error', 'auth_unavailable');
+    if (authUnavailable) loginUrl.searchParams.set('error', 'auth_unavailable');
     return NextResponse.redirect(loginUrl);
   }
 
