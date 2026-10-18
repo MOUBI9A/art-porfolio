@@ -12,6 +12,13 @@ export const revalidate = 60;
 const FEATURED_PORTFOLIO_TIMEOUT_MS = 750;
 
 async function getFeaturedPortfolios(): Promise<{ profiles: Profile[] }> {
+  // While account features are intentionally paused, the public marketing page
+  // must not contact the retired backend at all. This removes even the bounded
+  // timeout from the recruiter-facing path and renders the empty-network state.
+  if (process.env.NEXT_PUBLIC_AUTH_ENABLED !== 'true') {
+    return { profiles: [] };
+  }
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
