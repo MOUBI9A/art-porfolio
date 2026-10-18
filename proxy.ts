@@ -5,41 +5,42 @@ export async function proxy(request: NextRequest) {
   const url = request.nextUrl;
   const host = request.headers.get('host') || '';
 
-  // 1. Skip system/internal paths immediately
+  // Static/internal/public API paths do not need an auth refresh. Avoiding a
+  // Supabase network round-trip here keeps asset delivery and public pages fast
+  // and prevents an unavailable auth backend from breaking unrelated traffic.
   if (
-    url.pathname.startsWith('/_next') || 
-    url.pathname.startsWith('/api') || 
-    url.pathname.startsWith('/u/') || 
+    url.pathname.startsWith('/_next') ||
+    url.pathname.startsWith('/api') ||
+    url.pathname.startsWith('/u/') ||
     url.pathname === '/favicon.ico'
   ) {
-    return await updateSession(request);
+    return NextResponse.next();
   }
 
-  // 2. Define main domain
   const mainDomain = process.env.NEXT_PUBLIC_MAIN_DOMAIN || 'artifact.os';
-  
-  // 3. Extract subdomain (e.g., username.artifact.os)
-  const subdomain = host.endsWith(`.${mainDomain}`) 
-    ? host.replace(`.${mainDomain}`, '') 
+  const subdomain = host.endsWith(`.${mainDomain}`)
+    ? host.replace(`.${mainDomain}`, '')
     : null;
 
-  // 4. If we have a valid user subdomain (not www), rewrite to /u/[username]
   if (subdomain && subdomain !== 'www') {
     url.pathname = `/u/${subdomain}${url.pathname}`;
     return NextResponse.rewrite(url);
   }
 
-  // 5. Otherwise, proceed with session update (Dashboard protection etc)
-  return await updateSession(request);
+  // Only routes that actually depend on authentication should contact
+  // Supabase from middleware. Public marketing pages can render independently.
+  if (
+    url.pathname.startsWith('/dashboard') ||
+    url.pathname.startsWith('/auth')
+  ) {
+    return updateSession(request);
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static, _next/image (Next.js internals)
-     * - favicon.ico, public assets
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
