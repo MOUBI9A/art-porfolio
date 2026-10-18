@@ -29,6 +29,21 @@ export async function proxy(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
+  // ArtifactOS's previous Supabase project is retired. Account-dependent routes
+  // stay honest and usable by landing on a static status page until a dedicated
+  // backend is restored and NEXT_PUBLIC_AUTH_ENABLED=true is configured.
+  const authEnabled = process.env.NEXT_PUBLIC_AUTH_ENABLED === 'true';
+  const isAccountRoute =
+    pathname.startsWith('/dashboard') ||
+    (pathname.startsWith('/auth/') && pathname !== '/auth/unavailable');
+
+  if (!authEnabled && isAccountRoute) {
+    const unavailableUrl = request.nextUrl.clone();
+    unavailableUrl.pathname = '/auth/unavailable';
+    unavailableUrl.search = '';
+    return NextResponse.redirect(unavailableUrl);
+  }
+
   // Only routes whose behavior actually depends on authentication should pay
   // the cost of refreshing/verifying a Supabase session.
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/auth/login')) {
