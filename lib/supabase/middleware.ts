@@ -3,6 +3,12 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 const AUTH_TIMEOUT_MS = 1200;
 
+const fetchWithTimeout: typeof fetch = (input, init) =>
+  fetch(input, {
+    ...init,
+    signal: AbortSignal.timeout(AUTH_TIMEOUT_MS),
+  });
+
 /**
  * Refresh the auth session only for routes whose behavior depends on auth.
  * Network failures fail fast so a degraded auth provider cannot stall requests.
@@ -26,13 +32,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   const supabase = createServerClient<any>(supabaseUrl, supabaseKey, {
-    global: {
-      fetch: (input, init) =>
-        fetch(input, {
-          ...init,
-          signal: AbortSignal.timeout(AUTH_TIMEOUT_MS),
-        }),
-    },
+    global: { fetch: fetchWithTimeout },
     cookies: {
       getAll() {
         return request.cookies.getAll();
