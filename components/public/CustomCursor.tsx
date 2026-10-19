@@ -1,78 +1,91 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion, useSpring, useMotionValue } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 
+/**
+ * Desktop-only cinematic cursor without pulling Framer Motion into the shared
+ * root client graph. Pointer events are coalesced through requestAnimationFrame
+ * and touch/coarse-pointer devices never attach mouse listeners.
+ */
 export default function CustomCursor() {
-  const [mounted, setMounted] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
-  const [cursorText, setCursorText] = useState('');
-
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
-
-  const springConfig = { damping: 25, stiffness: 200 };
-  const springX = useSpring(cursorX, springConfig);
-  const springY = useSpring(cursorY, springConfig);
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    setMounted(true);
+    const cursor = cursorRef.current;
+    const label = labelRef.current;
+    if (!cursor || !label || !window.matchMedia('(pointer: fine)').matches) {
+      return;
+    }
 
-    const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
+    cursor.style.opacity = '1';
+
+    let frame: number | null = null;
+    let x = -100;
+    let y = -100;
+
+    const paint = () => {
+      cursor.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
+      frame = null;
     };
 
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const isSelectable = target.closest('a, button, [data-cursor]');
-      
-      if (isSelectable) {
-        setIsHovering(true);
-        const text = (isSelectable as HTMLElement).getAttribute('data-cursor') || '';
-        setCursorText(text);
-      } else {
-        setIsHovering(false);
-        setCursorText('');
-      }
+    const moveCursor = (event: MouseEvent) => {
+      x = event.clientX;
+      y = event.clientY;
+      if (frame === null) frame = window.requestAnimationFrame(paint);
     };
 
-    window.addEventListener('mousemove', moveCursor);
-    window.addEventListener('mouseover', handleMouseOver);
+    const handleMouseOver = (event: MouseEvent) => {
+      const target = event.target instanceof Element ? event.target : null;
+      const selectable = target?.closest('a, button, [data-cursor]') as HTMLElement | null;
+      const cursorText = selectable?.getAttribute('data-cursor') ?? '';
+      const isHovering = Boolean(selectable);
+
+      cursor.style.width = isHovering ? '80px' : '12px';
+      cursor.style.height = isHovering ? '80px' : '12px';
+      cursor.style.mixBlendMode = isHovering ? 'difference' : 'normal';
+      cursor.style.backgroundColor = isHovering ? '#fff' : 'var(--color-gold)';
+
+      label.textContent = cursorText;
+      label.style.opacity = isHovering && cursorText ? '1' : '0';
+      label.style.transform = isHovering && cursorText ? 'scale(1)' : 'scale(0.75)';
+    };
+
+    window.addEventListener('mousemove', moveCursor, { passive: true });
+    window.addEventListener('mouseover', handleMouseOver, { passive: true });
 
     return () => {
       window.removeEventListener('mousemove', moveCursor);
       window.removeEventListener('mouseover', handleMouseOver);
+      if (frame !== null) window.cancelAnimationFrame(frame);
     };
-  }, [cursorX, cursorY]);
-
-  if (!mounted) return null;
+  }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-[9999] opacity-0 sm:opacity-100">
-      <motion.div
-        className="flex items-center justify-center rounded-full bg-white transition-colors duration-300"
+    <div
+      ref={cursorRef}
+      aria-hidden="true"
+      className="fixed left-0 top-0 pointer-events-none z-[9999] flex items-center justify-center rounded-full"
+      style={{
+        width: 12,
+        height: 12,
+        opacity: 0,
+        backgroundColor: 'var(--color-gold)',
+        transform: 'translate3d(-100px, -100px, 0) translate(-50%, -50%)',
+        transition:
+          'width 180ms ease, height 180ms ease, background-color 180ms ease, opacity 120ms ease',
+        willChange: 'transform, width, height',
+      }}
+    >
+      <span
+        ref={labelRef}
+        className="text-[10px] font-bold tracking-[0.2em] text-black uppercase"
         style={{
-          width: isHovering ? 80 : 12,
-          height: isHovering ? 80 : 12,
-          x: springX,
-          y: springY,
-          translateX: '-50%',
-          translateY: '-50%',
-          mixBlendMode: isHovering ? 'difference' : 'normal',
-          backgroundColor: isHovering ? '#fff' : 'var(--color-gold)',
+          opacity: 0,
+          transform: 'scale(0.75)',
+          transition: 'opacity 140ms ease, transform 140ms ease',
         }}
-      >
-        {isHovering && cursorText && (
-          <motion.span
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-[10px] font-bold tracking-[0.2em] text-black uppercase"
-          >
-            {cursorText}
-          </motion.span>
-        )}
-      </motion.div>
+      />
     </div>
   );
 }
