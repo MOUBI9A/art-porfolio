@@ -2,7 +2,7 @@
 
 - lint exit: 0
 - typecheck exit: 0
-- build exit: 1
+- build exit: 0
 
 ## Lint
 
@@ -35,7 +35,7 @@
 
 ▲ Next.js 16.4.2 (Turbopack)
 ⚠ React 18 support is deprecated in Next.js 16 and will be removed in Next.js 17. Please upgrade to React 19. Learn more: https://nextjs.org/docs/messages/react-version
-✓ Running next.config.js took 21ms
+✓ Running next.config.js took 18ms
 ⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
 Attention: Next.js now collects completely anonymous telemetry regarding usage.
 This information is used to shape Next.js' roadmap and prioritize features.
@@ -47,32 +47,50 @@ https://nextjs.org/telemetry
 Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
-✓ Compiled successfully in 7.2s
+✓ Compiled successfully in 4.8s
   Running TypeScript ...
-  Finished TypeScript in 5.0s ...
+  Finished TypeScript in 3.2s ...
   Collecting page data using 3 workers ...
 ⚠ The Edge Runtime is deprecated. You can use the "nodejs" runtime instead. Learn more: https://nextjs.org/docs/messages/edge-runtime-deprecated
 ⚠ Using edge runtime on a page currently disables static generation for that page
   Generating static pages using 3 workers (0/20) ...
   Generating static pages using 3 workers (5/20) 
-Error occurred prerendering page "/auth/login". Read more: https://nextjs.org/docs/messages/prerender-error
-Error: @supabase/ssr: Your project's URL and API key are required to create a Supabase client!
+  Generating static pages using 3 workers (10/20) 
+  Generating static pages using 3 workers (15/20) 
+✓ Generating static pages using 3 workers (20/20) in 300ms
+  Finalizing page optimization ...
 
-Check your Supabase project's API settings to find these values
+Route (app)                      Revalidate  Expire
+┌ ○ /                                    1m      1y
+├ ○ /_not-found
+├ ƒ /admin
+├ ƒ /api/auth/callback
+├ ƒ /api/og
+├ ƒ /api/v1/analytics/stats
+├ ƒ /api/v1/analytics/track
+├ ƒ /api/v1/projects/[username]
+├ ○ /auth/forgot-password
+├ ○ /auth/login
+├ ○ /auth/signup
+├ ○ /auth/unavailable
+├ ○ /auth/update-password
+├ ƒ /dashboard
+├ ƒ /dashboard/experience
+├ ƒ /dashboard/projects
+├ ƒ /dashboard/projects/[id]
+├ ƒ /dashboard/projects/new
+├ ƒ /dashboard/settings
+├ ○ /pricing
+├ ○ /privacy
+├ ƒ /projects/[slug]
+├ ○ /terms
+└ ƒ /u/[username]
 
-https://supabase.com/dashboard/project/_/settings/api
-    at <unknown> (https://supabase.com/dashboard/project/_/settings/api)
-    at <unknown> (app/auth/login/page.tsx:13:20)
-  11 | export default function LoginPage() {
-  12 |   const router = useRouter();
-> 13 |   const supabase = createClient();
-     |                    ^
-  14 |
-  15 |   const [email, setEmail] = useState('');
-  16 |   const [password, setPassword] = useState(''); {
-  digest: '1330575382'
-}
-Export encountered an error on /auth/login/page: /auth/login, exiting the build.
-⨯ Next.js build worker exited with code: 1 and signal: null
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
 
 ```
