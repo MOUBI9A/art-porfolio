@@ -65,37 +65,96 @@ jobs:
           fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, md);
           NODE
 
-      - name: Lint
-        run: npm run lint
+      - name: Capture lint result
+        id: lint
+        shell: bash
+        run: |
+          set +e
+          npm run lint > lint.log 2>&1
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
 
-      - name: Typecheck
-        run: npx tsc --noEmit
+      - name: Capture typecheck result
+        id: typecheck
+        shell: bash
+        run: |
+          set +e
+          npx tsc --noEmit > typecheck.log 2>&1
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
 
-      - name: Build
-        run: npm run build
+      - name: Capture build result
+        id: build
+        shell: bash
         env:
           NEXT_PUBLIC_AUTH_ENABLED: "false"
-
-      - name: Commit regenerated lockfile and audit evidence
         run: |
-          if git diff --quiet -- package-lock.json docs/DEPENDENCY_AUDIT_2026-10-19.md; then
-            echo "Lockfile and audit evidence already current"
+          set +e
+          npm run build > build.log 2>&1
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Write validation evidence
+        env:
+          LINT_EXIT: ${{ steps.lint.outputs.exit_code }}
+          TYPECHECK_EXIT: ${{ steps.typecheck.outputs.exit_code }}
+          BUILD_EXIT: ${{ steps.build.outputs.exit_code }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const tail = (path, max = 12000) => {
+            if (!fs.existsSync(path)) return '(no output)';
+            const text = fs.readFileSync(path, 'utf8');
+            return text.length > max ? `…truncated…\n${text.slice(-max)}` : text;
+          };
+          const fence = (s) => `\`\`\`text\n${s.replaceAll('```', '``` ')}\n\`\`\``;
+          const md = [
+            '# Dependency validation — 2026-10-19',
+            '',
+            `- lint exit: ${process.env.LINT_EXIT}`,
+            `- typecheck exit: ${process.env.TYPECHECK_EXIT}`,
+            `- build exit: ${process.env.BUILD_EXIT}`,
+            '',
+            '## Lint', '', fence(tail('lint.log')), '',
+            '## Typecheck', '', fence(tail('typecheck.log')), '',
+            '## Build', '', fence(tail('build.log')), ''
+          ].join('\n');
+          fs.writeFileSync('docs/DEPENDENCY_VALIDATION_2026-10-19.md', md);
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `\n${md}`);
+          NODE
+
+      - name: Commit regenerated lockfile and evidence
+        run: |
+          if git diff --quiet -- package-lock.json docs/DEPENDENCY_AUDIT_2026-10-19.md docs/DEPENDENCY_VALIDATION_2026-10-19.md; then
+            echo "Lockfile and validation evidence already current"
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add package-lock.json docs/DEPENDENCY_AUDIT_2026-10-19.md
-            git commit -m "security: regenerate lockfile and record audit"
+            git add package-lock.json docs/DEPENDENCY_AUDIT_2026-10-19.md docs/DEPENDENCY_VALIDATION_2026-10-19.md
+            git commit -m "security: regenerate lockfile and record validation"
             git push
           fi
 
-      - name: Enforce production audit gate
+      - name: Enforce validation gates
+        env:
+          LINT_EXIT: ${{ steps.lint.outputs.exit_code }}
+          TYPECHECK_EXIT: ${{ steps.typecheck.outputs.exit_code }}
+          BUILD_EXIT: ${{ steps.build.outputs.exit_code }}
         run: |
           node <<'NODE'
           const fs = require('fs');
           const audit = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
           const v = audit.metadata?.vulnerabilities || {};
-          if ((v.critical || 0) > 0 || (v.high || 0) > 0) {
-            console.error(`Production audit gate failed: ${v.critical || 0} critical, ${v.high || 0} high.`);
+          const failures = [];
+          if ((v.critical || 0) > 0 || (v.high || 0) > 0) failures.push(`production audit: ${v.critical || 0} critical, ${v.high || 0} high`);
+          if (process.env.LINT_EXIT !== '0') failures.push(`lint exit ${process.env.LINT_EXIT}`);
+          if (process.env.TYPECHECK_EXIT !== '0') failures.push(`typecheck exit ${process.env.TYPECHECK_EXIT}`);
+          if (process.env.BUILD_EXIT !== '0') failures.push(`build exit ${process.env.BUILD_EXIT}`);
+          if (failures.length) {
+            console.error(`Validation gate failed: ${failures.join('; ')}`);
             process.exit(1);
           }
           NODE
