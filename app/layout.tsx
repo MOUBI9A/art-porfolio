@@ -32,7 +32,6 @@ export const metadata: Metadata = {
 };
 
 import CustomCursor from '@/components/public/CustomCursor';
-import ThemeProvider from '@/components/public/ThemeProvider';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 /**
@@ -40,8 +39,8 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
  *
  * Account-backed theming is intentionally disabled with the rest of the auth
  * surface. Reintroduce user settings inside an authenticated route-group
- * layout when auth returns; importing the cookie-aware Supabase server client
- * here makes every public route dynamic and defeats ISR.
+ * layout when auth returns. The default public theme already lives in
+ * globals.css, so no client theme provider is needed while settings are null.
  */
 export default function RootLayout({
   children,
@@ -51,7 +50,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${playfair.variable}`}>
       <body>
-        <ThemeProvider settings={null} />
         <div className="noise-grain" />
         <CustomCursor />
         {children}
