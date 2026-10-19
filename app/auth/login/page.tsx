@@ -10,7 +10,6 @@ import Link from 'next/link';
 
 export default function LoginPage() {
   const router = useRouter();
-  const supabase = createClient();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,7 +17,14 @@ export default function LoginPage() {
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
+
+    if (process.env.NEXT_PUBLIC_AUTH_ENABLED !== 'true') {
+      toast.error('Account access is temporarily paused.');
+      return;
+    }
+
     setLoading(true);
+    const supabase = createClient();
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 

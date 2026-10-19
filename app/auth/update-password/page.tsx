@@ -9,13 +9,19 @@ import { Lock, Loader2, Check } from 'lucide-react';
 
 export default function UpdatePasswordPage() {
   const router = useRouter();
-  const supabase = createClient();
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function handleUpdate(e: React.FormEvent) {
     e.preventDefault();
+
+    if (process.env.NEXT_PUBLIC_AUTH_ENABLED !== 'true') {
+      toast.error('Account access is temporarily paused.');
+      return;
+    }
+
     setLoading(true);
+    const supabase = createClient();
 
     const { error } = await supabase.auth.updateUser({ 
       password 
