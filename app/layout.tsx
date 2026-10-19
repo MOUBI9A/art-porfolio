@@ -35,14 +35,27 @@ import CustomCursor from '@/components/public/CustomCursor';
 import ThemeProvider from '@/components/public/ThemeProvider';
 import { createClient } from '@/lib/supabase/server';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import type { Settings } from '@/lib/types';
+
+async function getGlobalSettings(): Promise<Settings | null> {
+  // Account-backed theming is intentionally paused while auth is disabled.
+  // Avoid calling the cookie-aware Supabase server client in this state so
+  // public marketing pages remain eligible for static generation / ISR.
+  if (process.env.NEXT_PUBLIC_AUTH_ENABLED !== 'true') {
+    return null;
+  }
+
+  const supabase = await createClient();
+  const { data: settings } = await supabase.from('settings').select('*').single();
+  return settings ?? null;
+}
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const { data: settings } = await supabase.from('settings').select('*').single();
+  const settings = await getGlobalSettings();
 
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${playfair.variable}`}>
