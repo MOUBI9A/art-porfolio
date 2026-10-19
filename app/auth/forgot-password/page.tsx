@@ -8,14 +8,23 @@ import Link from 'next/link';
 import { ArrowLeft, Mail, CheckCircle2 } from 'lucide-react';
 
 export default function ForgotPasswordPage() {
-  const supabase = createClient();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSent] = useState(false);
 
   async function handleReset(e: React.FormEvent) {
     e.preventDefault();
+
+    // Account routes are redirected to /auth/unavailable by proxy.ts while the
+    // retired backend is disabled. Keep this page build-safe as defense in depth
+    // without constructing a Supabase client or contacting the retired project.
+    if (process.env.NEXT_PUBLIC_AUTH_ENABLED !== 'true') {
+      toast.error('Account access is temporarily paused.');
+      return;
+    }
+
     setLoading(true);
+    const supabase = createClient();
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/update-password`,
