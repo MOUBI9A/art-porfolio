@@ -1,0 +1,78 @@
+name: Dependency security gate
+
+on:
+  push:
+    branches:
+      - security/dependency-audit-2026-10-19
+    paths:
+      - package.json
+      - package-lock.json
+      - eslint.config.mjs
+      - .github/workflows/dependency-security.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit-build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+
+      - name: Refresh lockfile from pinned manifests
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Clean install
+        run: npm ci --no-audit --no-fund
+
+      - name: Audit dependencies
+        id: audit
+        shell: bash
+        run: |
+          set +e
+          npm audit --json > audit.json
+          audit_exit=$?
+          set -e
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('audit.json').read_text())
+          vulns = report.get('metadata', {}).get('vulnerabilities', {})
+          order = ('info', 'low', 'moderate', 'high', 'critical', 'total')
+          print('audit_counts=' + ', '.join(f'{key}:{vulns.get(key, 0)}' for key in order))
+          critical = int(vulns.get('critical', 0) or 0)
+          if critical:
+              raise SystemExit(f'critical advisories remain: {critical}')
+          PY
+          echo "npm_audit_exit=$audit_exit"
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Production build
+        run: npm run build
+
+      - name: Commit regenerated lockfile
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add package-lock.json
+          if git diff --cached --quiet; then
+            echo 'Lockfile already current.'
+            exit 0
+          fi
+          git commit -m 'chore: refresh security dependency lockfile'
+          git push
