@@ -1,5 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
-import { Profile } from '@/lib/types';
+import type { Profile } from '@/lib/types';
 import LandingNav from '@/components/landing/LandingNav';
 import AppHero from '@/components/landing/AppHero';
 import BentoFeatures from '@/components/landing/BentoFeatures';
@@ -13,8 +12,8 @@ const FEATURED_PORTFOLIO_TIMEOUT_MS = 750;
 
 async function getFeaturedPortfolios(): Promise<{ profiles: Profile[] }> {
   // While account features are intentionally paused, the public marketing page
-  // must not contact the retired backend at all. This removes even the bounded
-  // timeout from the recruiter-facing path and renders the empty-network state.
+  // must not contact or eagerly load the retired backend client at all. This
+  // keeps the public ISR route independent from Supabase until auth returns.
   if (process.env.NEXT_PUBLIC_AUTH_ENABLED !== 'true') {
     return { profiles: [] };
   }
@@ -29,6 +28,7 @@ async function getFeaturedPortfolios(): Promise<{ profiles: Profile[] }> {
   }
 
   try {
+    const { createClient } = await import('@supabase/supabase-js');
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { data: profiles } = await supabase
